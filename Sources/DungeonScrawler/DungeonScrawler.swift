@@ -45,9 +45,13 @@ class DungeonScrawler {
                 return
             }
 
-            print("🤷‍♂️")
+            print(unknownCommand())
         }
 
+    }
+
+    func unknownCommand() -> String {
+        return ["🤷‍♂️", "🤷‍♀️"].shuffled().first!
     }
 
     func inputLoop(handler: (String, [String]) -> Void) {
