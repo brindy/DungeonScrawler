@@ -47,7 +47,7 @@ class TownLocation: Location {
 
     private func handleDungeon(context: DungeonScrawler) {
         cprint("You head towards the ", 🎨.bold, "dungeon", 🎨.reset, ", ready to start a new adventure. ⚔️ 🛡 🎲 🐉")
-        context.location = DungeonLocation(seed: context.seed, level: 1)
+        context.location = DungeonLocation(seed: context.seed, level: 20)
     }
 
 }

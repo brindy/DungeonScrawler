@@ -19,18 +19,31 @@ class DungeonLocation: Location {
             self.y = y
         }
 
+        func walls() -> String {
+            let x = (
+                north != nil ? 1 : 0) +
+                (east != nil ? 2 : 0) +
+                (south != nil ? 4 : 0) +
+                (west != nil ? 8 : 0)
+            return String(format: "%x", x)
+        }
+
     }
 
     var hint: String?
 
     let level: Int
     let seed: Int
+    let map: [String]
     var room: Room
 
     init(seed: Int, level: Int) {
         self.seed = seed
         self.level = level
-        self.room = DungeonGenerator(seed: seed, level: level).buildDungeon()
+
+        let generator = DungeonGenerator(seed: seed, level: level)
+        self.room = generator.buildDungeon()
+        self.map = generator.map()
     }
 
     func describe() {
@@ -39,14 +52,25 @@ class DungeonLocation: Location {
     }
 
     func look() {
+        cprint("The room is empty.")
     }
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
 
         switch(command) {
         case "go": return handleGo(args: args, context: context)
+        case "map": return handleMap(context: context)
         default: return false
         }
+    }
+
+    private func handleMap(context: DungeonScrawler) -> Bool {
+
+        for line in map {
+            cprint(line)
+        }
+
+        return true
     }
 
     private func showExits() {
@@ -94,14 +118,6 @@ class DungeonLocation: Location {
 
 }
 
-extension RandomGenerator {
-
-    mutating func randomBool() -> Bool {
-        return randomHalfOpen() > 0.5
-    }
-
-}
-
 class DungeonGenerator {
 
     var randomGenerator: RandomGenerator
@@ -118,56 +134,102 @@ class DungeonGenerator {
 
     func buildDungeon() -> DungeonLocation.Room {
         cprint("Generating level ", level, " ", terminator: "")
-        let startingRoom = createRoom(x: 0, y: 0)
+        let startingRoom = createRoom(x: 0, y: 0, "start")
         while (rooms.count < maxRooms) {
-            buildDungeon(startingRoom)
+            let room = rooms.shuffled()[0]
+            print(#function, room.x, room.y)
+            buildDungeon(room, roomOdds: 4)
         }
 
         cprint(" enjoy!")
         return startingRoom
     }
 
-    private func buildDungeon(_ room: DungeonLocation.Room) {
+    func map() -> [String] {
+
+        var xMin = 0
+        var yMin = 0
+        var xMax = 0
+        var yMax = 0
+
+        for room in rooms {
+            xMin = min(room.x, xMin)
+            yMin = min(room.y, yMin)
+            xMax = max(room.x, xMax)
+            yMax = max(room.y, yMax)
+        }
+
+        yMin -= 1
+        yMax += 1
+        xMin -= 1
+        xMax += 1
+
+        var map = [String]()
+        for y in yMin ... yMax {
+            var line = ""
+            for x in xMin ... xMax {
+
+                if let room = roomAt(x, y) {
+                    line += room.walls()
+                } else {
+                    line += "#"
+                }
+
+            }
+            map.append(line)
+        }
+        return map
+    }
+
+    private func buildDungeon(_ room: DungeonLocation.Room, roomOdds: Int) {
         guard rooms.count < maxRooms else { return }
 
-        room.north = randomGenerator.randomBool() ? createRoom(x: room.x, y: room.y - 1) : room.north
-        room.east = randomGenerator.randomBool() ? createRoom(x: room.x + 1, y: room.y) : room.east
-        room.south = randomGenerator.randomBool() ? createRoom(x: room.x, y: room.y + 1) : room.south
-        room.west = randomGenerator.randomBool() ? createRoom(x: room.x - 1, y: room.y) : room.west
+        switch(randomGenerator.random64(max: 4)) {
+        case 0: room.north = createRoom(x: room.x, y: room.y - 1, "north")
+        case 1: room.east = createRoom(x: room.x + 1, y: room.y, "east")
+        case 2: room.south = createRoom(x: room.x, y: room.y + 1, "south")
+        case 3: room.west = createRoom(x: room.x - 1, y: room.y, "west")
+        default: return
+        }
 
         if let other = room.north {
             other.south = room
-            buildDungeon(other)
+            buildDungeon(other, roomOdds: roomOdds - 1)
         }
 
         if let other = room.east {
             other.west = room
-            buildDungeon(other)
+            buildDungeon(other, roomOdds: roomOdds - 1)
         }
 
         if let other = room.south {
             other.north = room
-            buildDungeon(other)
+            buildDungeon(other, roomOdds: roomOdds - 1)
         }
 
         if let other = room.west {
             other.east = room
-            buildDungeon(other)
+            buildDungeon(other, roomOdds: roomOdds - 1)
         }
     }
 
-    private func createRoom(x: Int, y: Int) -> DungeonLocation.Room {
+    private func createRoom(x: Int, y: Int, _ direction: String) -> DungeonLocation.Room {
         cprint(".", terminator: "")
-        // print(#function, x, y)
-        for room in rooms {
-            if room.x == x && room.y == y {
-                // print(#function, "room already exists at", x, y)
-                return room
-            }
+        if let room = roomAt(x, y) {
+            return room
         }
         let room = DungeonLocation.Room(x: x, y: y)
         rooms.append(room)
         return room
+    }
+
+    private func roomAt(_ x: Int, _ y: Int) -> DungeonLocation.Room? {
+        for room in rooms {
+            if room.x == x && room.y == y {
+                return room
+            }
+        }
+        return nil
     }
 
 }
