@@ -5,12 +5,7 @@ protocol Location {
 
     func print()
     func handle(command: String, args: [String]) -> Bool
-
-}
-
-protocol Command {
-
-    func execute(args: [String], context: DungeonScrawler) -> Bool
+    func help()
 
 }
 
@@ -19,11 +14,11 @@ class DungeonScrawler {
     let seed: Int
 
     let commands: [String: Command] = [
-        "help": HelpCommand(),
-        "?": HelpCommand(),
-        "look": LookCommand(),
-        "l": LookCommand(),
-        "quit": QuitCommand()
+        "help": StandardCommands.help,
+        "?": StandardCommands.help,
+        "look": StandardCommands.look,
+        "l": StandardCommands.look,
+        "quit": StandardCommands.quit
     ]
 
     var location: Location = TownLocation()
@@ -34,18 +29,19 @@ class DungeonScrawler {
 
     func start() {
         _ = LookCommand().execute(args: [], context: self)
+        print()
 
         inputLoop { command, args in
 
             if commands[command]?.execute(args: args, context: self) ?? false {
-                return
+                return true
             }
 
             if location.handle(command: command, args: args) {
-                return
+                return true
             }
 
-            print(unknownCommand())
+            return false
         }
 
     }
@@ -54,7 +50,7 @@ class DungeonScrawler {
         return ["🤷‍♂️", "🤷‍♀️"].shuffled().first!
     }
 
-    func inputLoop(handler: (String, [String]) -> Void) {
+    func inputLoop(handler: (String, [String]) -> Bool) {
         while(true) {
             print("> ", terminator: "")
             guard let command = readLine() else {
@@ -66,7 +62,11 @@ class DungeonScrawler {
             }
 
             let components = command.components(separatedBy: .whitespaces)
-            handler(components.first!, Array<String>(components.dropFirst()))
+            if !handler(components.first!, Array<String>(components.dropFirst())) {
+                print(unknownCommand())
+            }
+
+            print()
         }
     }
 
@@ -80,6 +80,10 @@ class TownLocation: Location {
 
     func print() {
         Swift.print("You are in the town.")
+    }
+
+    func help() {
+        Swift.print("Try looking around.")
     }
 
 }
