@@ -32,7 +32,9 @@ class QuitCommand: Command {
 class LookCommand: Command {
 
     func execute(args: [String], context: DungeonScrawler) -> Bool {
-        context.location.print()
+        context.location.describe()
+        print()
+        context.location.look()
         return true
     }
 
@@ -62,6 +64,11 @@ class HelpCommand: Command {
         print()
         for (help, keys) in commands {
             print(keys.sorted().joined(separator: ", "), "➡", help)
+        }
+
+        if let hint = context.location.hint {
+            print()
+            print("Hint:", hint)
         }
 
         return true

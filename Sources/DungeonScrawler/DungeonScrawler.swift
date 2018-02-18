@@ -3,9 +3,10 @@ import Foundation
 
 protocol Location {
 
-    func print()
-    func handle(command: String, args: [String]) -> Bool
-    func help()
+    var hint: String? { get }
+    func describe()
+    func look()
+    func handle(command: String, args: [String], context: DungeonScrawler) -> Bool
 
 }
 
@@ -21,27 +22,27 @@ class DungeonScrawler {
         "quit": StandardCommands.quit
     ]
 
-    var location: Location = TownLocation()
+    var location: Location = TownLocation() {
+        didSet {
+            print()
+            location.describe()
+        }
+    }
 
     init(seed: Int) {
         self.seed = seed
     }
 
     func start() {
-        _ = LookCommand().execute(args: [], context: self)
+        location.describe()
         print()
 
         inputLoop { command, args in
-
             if commands[command]?.execute(args: args, context: self) ?? false {
                 return true
             }
 
-            if location.handle(command: command, args: args) {
-                return true
-            }
-
-            return false
+            return location.handle(command: command, args: args, context: self)
         }
 
     }
@@ -72,18 +73,3 @@ class DungeonScrawler {
 
 }
 
-class TownLocation: Location {
-
-    func handle(command: String, args: [String]) -> Bool {
-        return false
-    }
-
-    func print() {
-        Swift.print("You are in the town.")
-    }
-
-    func help() {
-        Swift.print("Try looking around.")
-    }
-
-}
