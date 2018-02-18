@@ -29,10 +29,25 @@ class TownLocation: Location {
     }
 
     private func handleVisit(args: [String], context: DungeonScrawler) {
-        if args.count > 0 && args[0] == "merchant" {
-            cprint("You head towards the ", 🎨.bold, args[0], ".")
-            context.location = MerchantLocation()
+        guard args.count > 0 else { return }
+
+        switch(args[0]) {
+
+        case "merchant": handleMerchant(context: context)
+        case "dungeon": handleDungeon(context: context)
+        default: return
+
         }
+    }
+
+    private func handleMerchant(context: DungeonScrawler) {
+        cprint("You head towards the ", 🎨.bold, "merchant.")
+        context.location = MerchantLocation()
+    }
+
+    private func handleDungeon(context: DungeonScrawler) {
+        cprint("You head towards the ", 🎨.bold, "dungeon", 🎨.reset, ", ready to start a new adventure. ⚔️ 🛡 🎲 🐉")
+        context.location = DungeonLocation(seed: context.seed, level: 1)
     }
 
 }
