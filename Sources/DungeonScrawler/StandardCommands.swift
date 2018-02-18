@@ -19,7 +19,7 @@ protocol Command {
 class QuitCommand: Command {
 
     func execute(args: [String], context: DungeonScrawler) -> Bool {
-        print("👋")
+        cprint("👋")
         exit(0)
     }
 
@@ -60,15 +60,15 @@ class HelpCommand: Command {
             }
         }
 
-        print("Standard commands:")
-        print()
+        cprint("Standard commands:")
+        cprint()
         for (help, keys) in commands {
-            print(keys.sorted().joined(separator: ", "), "➡", help)
+            cprint(keys.sorted().joined(separator: ", "), " ➡ ", help)
         }
 
         if let hint = context.location.hint {
-            print()
-            print("Hint:", hint)
+            cprint()
+            cprint(🎨.italic, "Hint: ", hint)
         }
 
         return true

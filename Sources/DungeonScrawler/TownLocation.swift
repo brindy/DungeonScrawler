@@ -13,15 +13,15 @@ class TownLocation: Location {
     }
 
     func describe() {
-        print("You are in the town.")
+        cprint("You are in the town.")
     }
 
     func look() {
-        print("You can:")
-        print("visit merchant (wip)")
-        print("visit smithy (todo)")
-        print("visit alchemist (todo)")
-        print("leave town (todo)")
+        cprint("You can:")
+        cprint("visit merchant (wip)")
+        cprint("visit smithy (todo)")
+        cprint("visit alchemist (todo)")
+        cprint("visit dungeon (todo)")
     }
 
     var hint: String? {
@@ -30,7 +30,7 @@ class TownLocation: Location {
 
     private func handleVisit(args: [String], context: DungeonScrawler) {
         if args.count > 0 && args[0] == "merchant" {
-            print("You head towards the", args[0], terminator: ".\n")
+            cprint("You head towards the ", 🎨.bold, args[0], ".")
             context.location = MerchantLocation()
         }
     }
@@ -48,25 +48,25 @@ class MerchantLocation: Location {
     func describe() {
 
         if merchantInterest < 1 {
-            print("The merchant greets you excitedly, while glancing hopefully towards your coin purse.")
+            cprint("The merchant greets you excitedly, while glancing hopefully towards your coin purse.")
         } else if merchantInterest < 5 {
-            print("You are visiting the merchant, who seems eager to serve.")
+            cprint("You are visiting the merchant, who seems eager to serve.")
         } else if merchantInterest < 10 {
-            print("You are visiting the merchant, who is starting to look bored.")
+            cprint("You are visiting the merchant, who is starting to look bored.")
         } else {
-            print("You are visiting the merchant, who is idly counting their money.")
+            cprint("You are visiting the merchant, who is idly counting their money.")
         }
         merchantInterest += 1
 
     }
 
     func look() {
-        print("You can buy and sell things here, eventually.")
+        cprint("You can buy and sell things here, eventually.")
     }
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
         if command == "leave" {
-            print("You head towards the door. \"Come back soon!\", the merchant says.")
+            cprint("You head towards the door. ", 🎨.italic, "\"Come back soon!\",", 🎨.reset, " the merchant says.")
             context.location = TownLocation()
             return true
         }
