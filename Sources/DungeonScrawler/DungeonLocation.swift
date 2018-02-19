@@ -241,7 +241,7 @@ struct Dungeon {
 
 class DungeonGenerator {
 
-    var randomGenerator: RandomGenerator
+    var 🎲: RandomGenerator
     let minRooms: Int
     let level: Int
 
@@ -249,7 +249,7 @@ class DungeonGenerator {
 
     init(seed: Int, level: Int) {
         self.level = level
-        randomGenerator = MersenneTwister(seed: UInt64(seed))
+        🎲 = MersenneTwister(seed: UInt64(seed))
         minRooms = Int(pow((Double(level) * 10), 0.8) + 4)
     }
 
@@ -260,8 +260,8 @@ class DungeonGenerator {
         
         while (dungeon.rooms.count < minRooms) {
             let room = randomRoom()
-            let direction = randomGenerator.randomInt(max: 4)
-            let distance = randomGenerator.randomInt(max: level + 1)
+            let direction = 🎲.randomInt(max: 4)
+            let distance = 🎲.randomInt(max: level + 1)
             travel(from: room, direction: direction, distance: distance)
         }
         
@@ -285,7 +285,7 @@ class DungeonGenerator {
     }
     
     private func randomRoom() -> DungeonLocation.Room {
-        return dungeon.rooms[randomGenerator.randomInt(max: dungeon.rooms.count)]
+        return dungeon.rooms[🎲.randomInt(max: dungeon.rooms.count)]
     }
 
     private func travel(from room: DungeonLocation.Room, direction: Int, distance: Int) {
