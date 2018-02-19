@@ -195,48 +195,18 @@ class DungeonGenerator {
 
         while (dungeon.rooms.count < minRooms) {
             let room = dungeon.rooms[randomGenerator.randomInt(max: dungeon.rooms.count)]
-            buildDungeon(room)
+            
+            let direction = randomGenerator.randomInt(max: 4)
+            let distance = randomGenerator.randomInt(max: level + 1)
+            travel(from: room, direction: direction, distance: distance)
+            
         }
 
         cprint(" enjoy!")
         return dungeon
     }
 
-
-    private func buildDungeon(_ room: DungeonLocation.Room) {
-        guard dungeon.rooms.count < minRooms else { return }
-
-        switch(randomGenerator.randomInt(max: 4)) {
-        case 0: room.north = createRoom(x: room.x, y: room.y - 1)
-        case 1: room.east = createRoom(x: room.x + 1, y: room.y)
-        case 2: room.south = createRoom(x: room.x, y: room.y + 1)
-        case 3: room.west = createRoom(x: room.x - 1, y: room.y)
-        default: fatalError()
-        }
-
-        if let other = room.north {
-            other.south = room
-            travel(from: other, direction: 0, distance: randomGenerator.randomInt(max: level))
-        }
-
-        if let other = room.east {
-            other.west = room
-            travel(from: other, direction: 1, distance: randomGenerator.randomInt(max: level))
-        }
-
-        if let other = room.south {
-            other.north = room
-            travel(from: other, direction: 2, distance: randomGenerator.randomInt(max: level))
-        }
-
-        if let other = room.west {
-            other.east = room
-            travel(from: other, direction: 3, distance: randomGenerator.randomInt(max: level))
-        }
-    }
-
     private func travel(from room: DungeonLocation.Room, direction: Int, distance: Int) {
-
         guard distance > 0 else { return }
 
         switch(direction) {
