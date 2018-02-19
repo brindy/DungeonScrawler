@@ -1,7 +1,6 @@
 
 import Foundation
 
-// Number of rooms = ((level * 10) ^ 0.8) + 4
 class DungeonLocation: Location {
 
     class Room {
@@ -35,21 +34,19 @@ class DungeonLocation: Location {
 
     var hint: String?
 
-    let level: Int
     let seed: Int
-    let dungeon: Dungeon
-    
-    var currentRoom: Room
+
+    var level: Int
+    var currentRoom: Room!
+    var dungeon: Dungeon!
 
     init(seed: Int, level: Int) {
         self.seed = seed
         self.level = level
 
-        let generator = DungeonGenerator(seed: seed, level: level)
-        dungeon = generator.buildDungeon()
-        currentRoom = dungeon.rooms[0]
+        generate()
     }
-
+    
     func describe() {
         cprint("You are in the dungeon.")
         showUpOrDown()
@@ -73,9 +70,16 @@ class DungeonLocation: Location {
         case "s": return handleGo(args: ["south"], context: context)
         case "w": return handleGo(args: ["west"], context: context)
         case "up": return handleUp(context: context)
+        case "down": return handleDown(context: context)
         case "map": return handleMap(context: context)
         default: return false
         }
+    }
+    
+    private func generate() {
+        let generator = DungeonGenerator(seed: seed, level: level)
+        dungeon = generator.buildDungeon()
+        currentRoom = dungeon.rooms[0]
     }
     
     private func showUpOrDown() {
@@ -85,32 +89,60 @@ class DungeonLocation: Location {
         } else if currentRoom.up {
             cprint()
             cprint("Daylight shines through a hole in the ceiling above.")
+        } else if currentRoom.down {
+            cprint()
+            cprint("A set of stairs descends in to the darkness below.")
         }
     }
     
-    private func handleUp(context: DungeonScrawler) -> Bool {
-        
-        if currentRoom.up {
-            
-            if level > 1 {
-                ascendLevel(context: context)
-            } else {
-                ascendToTown(context: context)
-            }
-            
+    private func handleDown(context: DungeonScrawler) -> Bool {
+        guard currentRoom.down else {
+            cprint("You need to find the stairs down before you can do that!")
+            return true
+        }
+
+        if level > 1 {
+            cprint("With a deep breath, you descend another set of stairs in to the darkness below.")
         } else {
-            cprint("You can't go up here.")
+            cprint("Bracing yourself, you descend the stairs in to the darkness below.")
         }
         
+        level += 1
+        generate()
+        return true
+    }
+    
+    private func handleUp(context: DungeonScrawler) -> Bool {
+        guard currentRoom.up else {
+            cprint("You can't go up here.")
+            return true
+        }
+        
+        if level > 1 {
+            ascendLevel(context: context)
+        } else {
+            ascendToTown(context: context)
+        }
+
         return true
     }
 
     private func ascendLevel(context: DungeonScrawler) {
-        // TODO
+        
+        level -= 1
+        cprint("You head back up the long staircase.")
+        generate()
+        
+        for room in dungeon.rooms {
+            if room.down {
+                currentRoom = room
+            }
+        }
+        
     }
     
     private func ascendToTown(context: DungeonScrawler) {
-        print("You climb back out of the dungeon, leaving behind the ominous hole in the ground and head towards the town.")
+        cprint("You climb back out of the dungeon, leaving behind the ominous hole in the ground and head towards the town.")
         context.location = TownLocation()
     }
     
@@ -170,7 +202,10 @@ class DungeonLocation: Location {
     }
 
     private func go(_ room: Room?, direction: String, context: DungeonScrawler) -> Bool {
-        guard let room = room else { return false }
+        guard let room = room else {
+            cprint("You can't go that way.")
+            return true
+        }
         cprint("Heading ", direction, ".")
         currentRoom = room
         context.location = self
@@ -239,106 +274,4 @@ struct Dungeon {
 
 }
 
-class DungeonGenerator {
-
-    var 🎲: RandomGenerator
-    let minRooms: Int
-    let level: Int
-
-    var dungeon = Dungeon()
-
-    init(seed: Int, level: Int) {
-        self.level = level
-        🎲 = MersenneTwister(seed: UInt64(seed))
-        minRooms = Int(pow((Double(level) * 10), 0.8) + 4)
-    }
-
-    func buildDungeon() -> Dungeon {
-        cprint("Generating level ", level, " ", terminator: "")
-
-        createStartRoom()
-        
-        while (dungeon.rooms.count < minRooms) {
-            let room = randomRoom()
-            let direction = 🎲.randomInt(max: 4)
-            let distance = 🎲.randomInt(max: level + 1)
-            travel(from: room, direction: direction, distance: distance)
-        }
-        
-        createStairsDown()
-
-        cprint(" enjoy!")
-        return dungeon
-    }
-    
-    private func createStartRoom() {
-        let room = createRoom(x: 0, y: 0)
-        room.up = true
-    }
-    
-    private func createStairsDown() {
-        var room: DungeonLocation.Room?
-        while(room?.up ?? true) {
-            room = randomRoom()
-        }
-        room?.down = true
-    }
-    
-    private func randomRoom() -> DungeonLocation.Room {
-        return dungeon.rooms[🎲.randomInt(max: dungeon.rooms.count)]
-    }
-
-    private func travel(from room: DungeonLocation.Room, direction: Int, distance: Int) {
-        guard distance > 0 else { return }
-
-        switch(direction) {
-        case 0: room.north = createRoom(x: room.x, y: room.y - 1)
-        case 1: room.east = createRoom(x: room.x + 1, y: room.y)
-        case 2: room.south = createRoom(x: room.x, y: room.y + 1)
-        case 3: room.west = createRoom(x: room.x - 1, y: room.y)
-        default: fatalError()
-        }
-
-        if let other = room.north {
-            other.south = room
-            travel(from: other, direction: 0, distance: distance - 1)
-        }
-
-        if let other = room.east {
-            other.west = room
-            travel(from: other, direction: 1, distance: distance - 1)
-        }
-
-        if let other = room.south {
-            other.north = room
-            travel(from: other, direction: 2, distance: distance - 1)
-        }
-
-        if let other = room.west {
-            other.east = room
-            travel(from: other, direction: 3, distance: distance - 1)
-        }
-
-    }
-
-    private func createRoom(x: Int, y: Int) -> DungeonLocation.Room {
-        cprint(".", terminator: "")
-        if let room = dungeon.roomAt(x, y) {
-            return room
-        }
-        let room = DungeonLocation.Room(x: x, y: y)
-        dungeon.rooms.append(room)
-        return room
-    }
-
-
-}
-
-extension RandomGenerator {
-
-    mutating func randomInt(max: Int) -> Int {
-        return Int(random32(max: UInt32(max)))
-    }
-
-}
 
