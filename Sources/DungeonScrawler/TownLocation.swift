@@ -18,10 +18,11 @@ class TownLocation: Location {
 
     func look() {
         cprint("You can:")
-        cprint("visit merchant (wip)")
-        cprint("visit smithy (todo)")
-        cprint("visit alchemist (todo)")
-        cprint("visit dungeon (todo)")
+        cprint("visit the merchant (wip)")
+        cprint("visit the smithy (todo)")
+        cprint("visit the alchemist (todo)")
+        cprint("visit the mage (todo)")
+        cprint("visit the dungeon (wip)")
     }
 
     var hint: String? {
@@ -31,12 +32,14 @@ class TownLocation: Location {
     private func handleVisit(args: [String], context: DungeonScrawler) {
         guard args.count > 0 else { return }
 
-        switch(args[0]) {
+        let who = args[0]
+        
+        switch(who) {
 
         case "merchant": handleMerchant(context: context)
         case "dungeon": handleDungeon(context: context)
-        default: return
-
+        default:
+            cprint("There is no '\(who)' in the town.")
         }
     }
 
@@ -46,7 +49,8 @@ class TownLocation: Location {
     }
 
     private func handleDungeon(context: DungeonScrawler) {
-        cprint("You head towards the ", 🎨.bold, "dungeon", 🎨.reset, ", ready to start a new adventure. ⚔️ 🛡 🎲 🐉")
+        cprint("You head towards the ", 🎨.bold, "dungeon", 🎨.reset, ", ready to start a new adventure.")
+        cprint("You look down an imposing hole in the ground and descend to face your fate!")
         context.location = DungeonLocation(seed: context.seed, level: 1)
     }
 
