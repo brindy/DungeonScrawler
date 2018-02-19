@@ -34,20 +34,21 @@ class DungeonLocation: Location {
 
     let level: Int
     let seed: Int
-    let map: [String]
-    var room: Room
+    let dungeon: Dungeon
+    
+    var currentRoom: Room
 
     init(seed: Int, level: Int) {
         self.seed = seed
         self.level = level
 
         let generator = DungeonGenerator(seed: seed, level: level)
-        self.room = generator.buildDungeon()
-        self.map = generator.map()
+        dungeon = generator.buildDungeon()
+        currentRoom = dungeon.rooms[0]
     }
 
     func describe() {
-        cprint("You are in the dungeon at ", room.x, ", ", room.y)
+        cprint("You are in the dungeon at ", currentRoom.x, ", ", currentRoom.y)
         showExits()
     }
 
@@ -66,6 +67,8 @@ class DungeonLocation: Location {
 
     private func handleMap(context: DungeonScrawler) -> Bool {
 
+        let map = dungeon.map()
+        
         for line in map {
             cprint(line)
         }
@@ -75,19 +78,19 @@ class DungeonLocation: Location {
 
     private func showExits() {
         var exits = [String]()
-        if room.north != nil {
+        if currentRoom.north != nil {
             exits.append("north")
         }
 
-        if room.east != nil {
+        if currentRoom.east != nil {
             exits.append("east")
         }
 
-        if room.south != nil {
+        if currentRoom.south != nil {
             exits.append("south")
         }
 
-        if room.west != nil {
+        if currentRoom.west != nil {
             exits.append("west")
         }
 
@@ -99,10 +102,10 @@ class DungeonLocation: Location {
 
         let direction = args[0]
         switch(direction) {
-        case "north": return go(room.north, direction: direction, context: context)
-        case "east": return go(room.east, direction: direction, context: context)
-        case "south": return go(room.south, direction: direction, context: context)
-        case "west": return go(room.west, direction: direction, context: context)
+        case "north": return go(currentRoom.north, direction: direction, context: context)
+        case "east": return go(currentRoom.east, direction: direction, context: context)
+        case "south": return go(currentRoom.south, direction: direction, context: context)
+        case "west": return go(currentRoom.west, direction: direction, context: context)
         default: return false
         }
 
@@ -111,78 +114,95 @@ class DungeonLocation: Location {
     private func go(_ room: Room?, direction: String, context: DungeonScrawler) -> Bool {
         guard let room = room else { return false }
         cprint("Heading ", direction, ". (", room.x, ", ", room.y, ")")
-        self.room = room
+        currentRoom = room
         context.location = self
         return true
     }
 
+    
 }
 
-class DungeonGenerator {
-
-    var randomGenerator: RandomGenerator
-    let maxRooms: Int
-    let level: Int
-
+struct Dungeon {
+    
     var rooms = [DungeonLocation.Room]()
-
-    init(seed: Int, level: Int) {
-        self.level = level
-        randomGenerator = MersenneTwister(seed: UInt64(seed))
-        maxRooms = Int(pow((Double(level) * 10), 0.8) + 4)
-    }
-
-    func buildDungeon() -> DungeonLocation.Room {
-        cprint("Generating level ", level, " ", terminator: "")
-        let startingRoom = createRoom(x: 0, y: 0)
-
-        while (rooms.count < maxRooms) {
-            let room = rooms[randomGenerator.randomInt(max: rooms.count)]
-            buildDungeon(room)
-        }
-
-        cprint(" enjoy!")
-        return startingRoom
-    }
-
+    
     func map() -> [String] {
-
         var xMin = 0
         var yMin = 0
         var xMax = 0
         var yMax = 0
-
+        
         for room in rooms {
             xMin = min(room.x, xMin)
             yMin = min(room.y, yMin)
             xMax = max(room.x, xMax)
             yMax = max(room.y, yMax)
         }
-
+        
         yMin -= 1
         yMax += 1
         xMin -= 1
         xMax += 1
-
+        
         var map = [String]()
         for y in yMin ... yMax {
             var line = ""
             for x in xMin ... xMax {
-
+                
                 if let room = roomAt(x, y) {
                     line += room.walls()
                 } else {
                     line += "."
                 }
-
+                
             }
             map.append(line)
         }
         return map
     }
+    
+    func roomAt(_ x: Int, _ y: Int) -> DungeonLocation.Room? {
+        for room in rooms {
+            if room.x == x && room.y == y {
+                return room
+            }
+        }
+        return nil
+    }
+
+
+}
+
+class DungeonGenerator {
+
+    var randomGenerator: RandomGenerator
+    let minRooms: Int
+    let level: Int
+
+    var dungeon = Dungeon()
+
+    init(seed: Int, level: Int) {
+        self.level = level
+        randomGenerator = MersenneTwister(seed: UInt64(seed))
+        minRooms = Int(pow((Double(level) * 10), 0.8) + 4)
+    }
+
+    func buildDungeon() -> Dungeon {
+        cprint("Generating level ", level, " ", terminator: "")
+        _ = createRoom(x: 0, y: 0)
+
+        while (dungeon.rooms.count < minRooms) {
+            let room = dungeon.rooms[randomGenerator.randomInt(max: dungeon.rooms.count)]
+            buildDungeon(room)
+        }
+
+        cprint(" enjoy!")
+        return dungeon
+    }
+
 
     private func buildDungeon(_ room: DungeonLocation.Room) {
-        guard rooms.count < maxRooms else { return }
+        guard dungeon.rooms.count < minRooms else { return }
 
         switch(randomGenerator.randomInt(max: 4)) {
         case 0: room.north = createRoom(x: room.x, y: room.y - 1)
@@ -249,22 +269,14 @@ class DungeonGenerator {
 
     private func createRoom(x: Int, y: Int) -> DungeonLocation.Room {
         cprint(".", terminator: "")
-        if let room = roomAt(x, y) {
+        if let room = dungeon.roomAt(x, y) {
             return room
         }
         let room = DungeonLocation.Room(x: x, y: y)
-        rooms.append(room)
+        dungeon.rooms.append(room)
         return room
     }
 
-    private func roomAt(_ x: Int, _ y: Int) -> DungeonLocation.Room? {
-        for room in rooms {
-            if room.x == x && room.y == y {
-                return room
-            }
-        }
-        return nil
-    }
 
 }
 
