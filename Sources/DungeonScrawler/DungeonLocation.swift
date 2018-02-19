@@ -134,11 +134,11 @@ class DungeonGenerator {
 
     func buildDungeon() -> DungeonLocation.Room {
         cprint("Generating level ", level, " ", terminator: "")
-        let startingRoom = createRoom(x: 0, y: 0, "start")
+        let startingRoom = createRoom(x: 0, y: 0)
+
         while (rooms.count < maxRooms) {
-            let room = rooms.shuffled()[0]
-            print(#function, room.x, room.y)
-            buildDungeon(room, roomOdds: 4)
+            let room = rooms[randomGenerator.randomInt(max: rooms.count)]
+            buildDungeon(room)
         }
 
         cprint(" enjoy!")
@@ -172,7 +172,7 @@ class DungeonGenerator {
                 if let room = roomAt(x, y) {
                     line += room.walls()
                 } else {
-                    line += "#"
+                    line += "."
                 }
 
             }
@@ -181,39 +181,73 @@ class DungeonGenerator {
         return map
     }
 
-    private func buildDungeon(_ room: DungeonLocation.Room, roomOdds: Int) {
+    private func buildDungeon(_ room: DungeonLocation.Room) {
         guard rooms.count < maxRooms else { return }
 
-        switch(randomGenerator.random64(max: 4)) {
-        case 0: room.north = createRoom(x: room.x, y: room.y - 1, "north")
-        case 1: room.east = createRoom(x: room.x + 1, y: room.y, "east")
-        case 2: room.south = createRoom(x: room.x, y: room.y + 1, "south")
-        case 3: room.west = createRoom(x: room.x - 1, y: room.y, "west")
-        default: return
+        switch(randomGenerator.randomInt(max: 4)) {
+        case 0: room.north = createRoom(x: room.x, y: room.y - 1)
+        case 1: room.east = createRoom(x: room.x + 1, y: room.y)
+        case 2: room.south = createRoom(x: room.x, y: room.y + 1)
+        case 3: room.west = createRoom(x: room.x - 1, y: room.y)
+        default: fatalError()
         }
 
         if let other = room.north {
             other.south = room
-            buildDungeon(other, roomOdds: roomOdds - 1)
+            travel(from: other, direction: 0, distance: randomGenerator.randomInt(max: level))
         }
 
         if let other = room.east {
             other.west = room
-            buildDungeon(other, roomOdds: roomOdds - 1)
+            travel(from: other, direction: 1, distance: randomGenerator.randomInt(max: level))
         }
 
         if let other = room.south {
             other.north = room
-            buildDungeon(other, roomOdds: roomOdds - 1)
+            travel(from: other, direction: 2, distance: randomGenerator.randomInt(max: level))
         }
 
         if let other = room.west {
             other.east = room
-            buildDungeon(other, roomOdds: roomOdds - 1)
+            travel(from: other, direction: 3, distance: randomGenerator.randomInt(max: level))
         }
     }
 
-    private func createRoom(x: Int, y: Int, _ direction: String) -> DungeonLocation.Room {
+    private func travel(from room: DungeonLocation.Room, direction: Int, distance: Int) {
+
+        guard distance > 0 else { return }
+
+        switch(direction) {
+        case 0: room.north = createRoom(x: room.x, y: room.y - 1)
+        case 1: room.east = createRoom(x: room.x + 1, y: room.y)
+        case 2: room.south = createRoom(x: room.x, y: room.y + 1)
+        case 3: room.west = createRoom(x: room.x - 1, y: room.y)
+        default: fatalError()
+        }
+
+        if let other = room.north {
+            other.south = room
+            travel(from: other, direction: 0, distance: distance - 1)
+        }
+
+        if let other = room.east {
+            other.west = room
+            travel(from: other, direction: 1, distance: distance - 1)
+        }
+
+        if let other = room.south {
+            other.north = room
+            travel(from: other, direction: 2, distance: distance - 1)
+        }
+
+        if let other = room.west {
+            other.east = room
+            travel(from: other, direction: 3, distance: distance - 1)
+        }
+
+    }
+
+    private func createRoom(x: Int, y: Int) -> DungeonLocation.Room {
         cprint(".", terminator: "")
         if let room = roomAt(x, y) {
             return room
@@ -233,3 +267,12 @@ class DungeonGenerator {
     }
 
 }
+
+extension RandomGenerator {
+
+    mutating func randomInt(max: Int) -> Int {
+        return Int(random32(max: UInt32(max)))
+    }
+
+}
+

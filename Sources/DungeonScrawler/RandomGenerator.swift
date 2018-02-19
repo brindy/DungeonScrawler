@@ -69,8 +69,8 @@ public extension RandomGenerator {
 			var result: UInt64
 			repeat {
 				result = random64()
-			} while result < UInt64.max % (max + 1)
-			return result % (max + 1)
+			} while result < UInt64.max % (max)
+			return result % (max)
 		}
 	}
 	
@@ -82,8 +82,8 @@ public extension RandomGenerator {
 			var result: UInt32
 			repeat {
 				result = random32()
-			} while result < UInt32.max % (max + 1)
-			return result % (max + 1)
+			} while result < UInt32.max % (max)
+			return result % (max)
 		}
 	}
 	
