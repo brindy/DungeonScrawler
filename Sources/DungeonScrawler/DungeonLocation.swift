@@ -67,7 +67,7 @@ class DungeonLocation: Location {
 
     private func handleMap(context: DungeonScrawler) -> Bool {
 
-        let map = dungeon.map()
+        let map = dungeon.generateMap(currentRoom: currentRoom)
         
         for line in map {
             cprint(line)
@@ -126,7 +126,7 @@ struct Dungeon {
     
     var rooms = [DungeonLocation.Room]()
     
-    func map() -> [String] {
+    func generateMap(currentRoom: DungeonLocation.Room) -> [String] {
         var xMin = 0
         var yMin = 0
         var xMax = 0
@@ -149,7 +149,9 @@ struct Dungeon {
             var line = ""
             for x in xMin ... xMax {
                 
-                if let room = roomAt(x, y) {
+                if x == currentRoom.x && y == currentRoom.y {
+                    line += "X"
+                } else if let room = roomAt(x, y) {
                     line += room.walls()
                 } else {
                     line += "."
