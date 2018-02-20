@@ -3,64 +3,13 @@ import Foundation
 
 class DungeonLocation: Location {
 
-    class Room {
-
-        var north: Room?
-        var east: Room?
-        var south: Room?
-        var west: Room?
-        
-        var up = false
-        var down = false
-
-        let x: Int
-        let y: Int
-
-        init(x: Int, y: Int) {
-            self.x = x
-            self.y = y
-        }
-
-        func exits() -> [String] {
-            var exits = [String]()
-            if north != nil {
-                exits.append("north")
-            }
-            
-            if east != nil {
-                exits.append("east")
-            }
-            
-            if south != nil {
-                exits.append("south")
-            }
-            
-            if west != nil {
-                exits.append("west")
-            }
-            
-            if up {
-                exits.append("up")
-            }
-            
-            if down {
-                exits.append("down")
-            }
-            return exits
-        }
-        
-        static func ==(left: Room, right: Room) -> Bool {
-            return left.x == right.x && left.y == right.y
-        }
-        
-    }
 
     var hint: String?
 
     let seed: Int
 
     var level: Int
-    var currentRoom: Room!
+    var currentRoom: Dungeon.Room!
     var dungeon: Dungeon!
 
     init(seed: Int, level: Int) {
@@ -193,7 +142,7 @@ class DungeonLocation: Location {
 
     }
 
-    private func go(_ room: Room?, direction: String, context: DungeonScrawler) -> Bool {
+    private func go(_ room: Dungeon.Room?, direction: String, context: DungeonScrawler) -> Bool {
         guard let room = room else {
             cprint("You can't go that way.")
             return true
@@ -209,53 +158,90 @@ class DungeonLocation: Location {
 
 struct Dungeon {
     
-    var rooms = [DungeonLocation.Room]()
-    
-    func printMap(currentRoom: DungeonLocation.Room? = nil) {
-        var xMin = 0
-        var yMin = 0
-        var xMax = 0
-        var yMax = 0
+    class Room {
         
-        for room in rooms {
-            xMin = min(room.x, xMin)
-            yMin = min(room.y, yMin)
-            xMax = max(room.x, xMax)
-            yMax = max(room.y, yMax)
+        var north: Room?
+        var east: Room?
+        var south: Room?
+        var west: Room?
+        
+        var up = false
+        var down = false
+        
+        let x: Int
+        let y: Int
+        
+        init(x: Int, y: Int) {
+            self.x = x
+            self.y = y
         }
         
-        yMin -= 1
-        yMax += 1
-        xMin -= 1
-        xMax += 1
+        func exits() -> [String] {
+            var exits = [String]()
+            if north != nil {
+                exits.append("north")
+            }
+            
+            if east != nil {
+                exits.append("east")
+            }
+            
+            if south != nil {
+                exits.append("south")
+            }
+            
+            if west != nil {
+                exits.append("west")
+            }
+            
+            if up {
+                exits.append("up")
+            }
+            
+            if down {
+                exits.append("down")
+            }
+            return exits
+        }
+        
+        static func ==(left: Room, right: Room) -> Bool {
+            return left.x == right.x && left.y == right.y
+        }
+        
+    }
 
-        let width = ((xMax - xMin) * 2) - 1
-        let height = ((yMax - yMin) * 2) - 1
+    
+    var rooms = [Room]()
+    
+    func printMap(currentRoom: Room? = nil) {
+        let extents = calculateExtents()
+        
+        let width = ((extents.xMax - extents.xMin) * 2) - 1
+        let height = ((extents.yMax - extents.yMin) * 2) - 1
         
         var grid = Array(repeating: Array(repeating: ".", count: width), count: height)
         
-        for y in yMin ..< yMax {
-            for x in xMin ..< xMax {
-                let gridX = ((x - xMin) * 2) - 1
-                let gridY = ((y - yMin) * 2) - 1
+        for y in extents.yMin ..< extents.yMax {
+            for x in extents.xMin ..< extents.xMax {
+                let gridX = ((x - extents.xMin) * 2) - 1
+                let gridY = ((y - extents.yMin) * 2) - 1
                 
-                if let room = roomAt(x, y) {
-                    grid[gridY][gridX] = "O"
-                    grid[gridY][gridX] = room.up ? "▲" : grid[gridY][gridX]
-                    grid[gridY][gridX] = room.down ? "▼" : grid[gridY][gridX]
-                    
-                    if nil != currentRoom {
-                        grid[gridY][gridX] = room == currentRoom! ? "U" : grid[gridY][gridX]
-                    }
-                    
-                    if room.south != nil {
-                        grid[gridY + 1][gridX] =  "|"
-                    }
-                    
-                    if room.east != nil {
-                        grid[gridY][gridX + 1] =  "-"
-                    }
-                    
+                guard let room = roomAt(x, y) else { continue }
+
+                grid[gridY][gridX] = "O"
+                grid[gridY][gridX] = room.up ? "▲" : grid[gridY][gridX]
+                grid[gridY][gridX] = room.down ? "▼" : grid[gridY][gridX]
+                
+                if nil != currentRoom {
+                    grid[gridY][gridX] = room == currentRoom! ? "U" : grid[gridY][gridX]
+                }
+                
+                if room.south != nil {
+                    grid[gridY + 1][gridX] =  "|"
+                }
+                
+                if room.east != nil {
+                    grid[gridY][gridX + 1] =  "-"
                 }
             }
         }
@@ -268,7 +254,7 @@ struct Dungeon {
         }
     }
     
-    func roomAt(_ x: Int, _ y: Int) -> DungeonLocation.Room? {
+    func roomAt(_ x: Int, _ y: Int) -> Room? {
         for room in rooms {
             if room.x == x && room.y == y {
                 return room
@@ -277,6 +263,21 @@ struct Dungeon {
         return nil
     }
 
+    private func calculateExtents() -> (xMin: Int, yMin: Int, xMax: Int, yMax: Int) {
+        var xMin = 0
+        var yMin = 0
+        var xMax = 0
+        var yMax = 0
+        
+        for room in rooms {
+            xMin = min(room.x, xMin)
+            yMin = min(room.y, yMin)
+            xMax = max(room.x, xMax)
+            yMax = max(room.y, yMax)
+        }
+        
+        return (xMin - 1, yMin - 1, xMax + 1, yMax + 1)
+    }
 
 }
 
