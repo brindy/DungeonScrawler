@@ -28,7 +28,10 @@ if let maps = Int(CommandLine.argNamed("maps") ?? "") {
     for level in 1 ... maps {
         let generator = DungeonGenerator(seed: seed, level: level)
         let dungeon = generator.buildDungeon()
+        
+        cprint("Level ", level)
         dungeon.printMap()
+        cprint()
     }
         
 } else {

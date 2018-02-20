@@ -19,13 +19,11 @@ class DungeonGenerator {
     
     init(seed: Int, level: Int) {
         self.level = level
-        🎲 = MersenneTwister(seed: UInt64(seed))
+        🎲 = MersenneTwister(seed: UInt64(seed + level))
         minRooms = (level * 10) + 5
     }
     
     func buildDungeon() -> Dungeon {
-        cprint("Generating level ", level, " ", terminator: "")
-        
         createStartRoom()
         
         while (dungeon.rooms.count < minRooms) {
@@ -36,8 +34,6 @@ class DungeonGenerator {
         }
         
         createStairsDown()
-        
-        cprint(" enjoy!")
         return dungeon
     }
     
@@ -47,11 +43,20 @@ class DungeonGenerator {
     }
     
     private func createStairsDown() {
-        var room: DungeonLocation.Room?
-        while(room?.up ?? true) {
-            room = randomRoom()
+        var downRoom: DungeonLocation.Room = dungeon.rooms[0]
+        var distance = 0.0
+        
+        for room in dungeon.rooms {
+            let x = Double(room.x)
+            let y = Double(room.y)
+            let d = x * x + y + y
+            if d > distance {
+                downRoom = room
+                distance = d
+            }
         }
-        room?.down = true
+        
+        downRoom.down = true
     }
     
     private func randomRoom() -> DungeonLocation.Room {
@@ -94,7 +99,6 @@ class DungeonGenerator {
     }
     
     private func createRoom(x: Int, y: Int) -> DungeonLocation.Room {
-        cprint(".", terminator: "")
         if let room = dungeon.roomAt(x, y) {
             return room
         }
@@ -102,7 +106,6 @@ class DungeonGenerator {
         dungeon.rooms.append(room)
         return room
     }
-    
     
 }
 
