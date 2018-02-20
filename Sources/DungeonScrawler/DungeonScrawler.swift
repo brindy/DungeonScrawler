@@ -54,11 +54,11 @@ class DungeonScrawler {
     func inputLoop(handler: (String, [String]) -> Bool) {
         while(true) {
             print("> ", terminator: "")
-            guard let command = readLine() else {
+            guard let command = readLine()?.trimmingCharacters(in: .whitespaces) else {
                 exit(1)
             }
 
-            guard command.trimmingCharacters(in: .whitespaces).count > 0 else {
+            guard command.count > 0 else {
                 continue
             }
 

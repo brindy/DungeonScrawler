@@ -3,7 +3,6 @@
 class TownLocation: Location {
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
-
         if command == "visit" {
             handleVisit(args: args, context: context)
             return true
@@ -30,7 +29,10 @@ class TownLocation: Location {
     }
 
     private func handleVisit(args: [String], context: DungeonScrawler) {
-        guard args.count > 0 else { return }
+        guard args.count > 0 else {
+            cprint("Who do you want to visit?")
+            return
+        }
 
         let who = args[0]
         

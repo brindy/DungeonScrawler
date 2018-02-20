@@ -256,8 +256,8 @@ struct Dungeon {
             }
         }
         
-        for row in grid {
-            for location in row {
+        for cols in grid {
+            for location in cols {
                 print(location.replacingOccurrences(of: ".", with: "\(🎨.grey).\(🎨.reset)"), terminator: "")
             }
             print()
