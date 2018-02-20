@@ -27,8 +27,33 @@ class DungeonGenerator {
         createStartRoom()
         
         while (dungeon.rooms.count < minRooms) {
-            let room = randomRoom()
-            let direction = 🎲.randomInt(max: 4)
+            let room = dungeon.rooms.random(withGenerator: &🎲)
+
+            // let direction = 🎲.randomInt(max: 4)
+
+            var directions = [Int]()
+            if room.exits().count < 3 {
+                
+                if room.north == nil { directions.append(0) }
+                if room.east == nil { directions.append(1) }
+                if room.south == nil { directions.append(2) }
+                if room.west == nil { directions.append(3) }
+                
+            } else {
+                if room.north == nil && room.south == nil {
+                    directions.append(0)
+                    directions.append(2)
+                }
+                
+                if room.east == nil && room.west == nil {
+                    directions.append(1)
+                    directions.append(3)
+                }
+            }
+            
+            guard directions.count > 0 else { continue }
+            
+            let direction = directions.random(withGenerator: &🎲)            
             let distance = 🎲.randomInt(max: 2) + 1
             travel(from: room, direction: direction, distance: distance)
         }
@@ -43,24 +68,22 @@ class DungeonGenerator {
     }
     
     private func createStairsDown() {
-        var downRoom: Dungeon.Room = dungeon.rooms[0]
-        var distance = 0.0
+        var rooms = [Dungeon.Room]()
+        var minDistance = Int(ceil(Double(level) / 2))
         
-        for room in dungeon.rooms {
-            let x = Double(room.x)
-            let y = Double(room.y)
-            let d = x * x + y + y
-            if d > distance {
-                downRoom = room
-                distance = d
+        while(rooms.isEmpty) {
+            for room in dungeon.rooms {
+                let x = Double(room.x)
+                let y = Double(room.y)
+                let d = Int(sqrt(x * x + y * y))
+                if d > minDistance {
+                    rooms.append(room)
+                }
             }
+            minDistance -= 1
         }
-        
-        downRoom.down = true
-    }
-    
-    private func randomRoom() -> Dungeon.Room {
-        return dungeon.rooms[🎲.randomInt(max: dungeon.rooms.count)]
+
+        rooms.random(withGenerator: &🎲).down = true
     }
     
     private func travel(from room: Dungeon.Room, direction: Int, distance: Int) {

@@ -26,3 +26,12 @@ extension Sequence {
     }
 }
 
+extension Array {
+    
+    func random( withGenerator 🎲: inout RandomGenerator) -> Element {
+        let index = 🎲.randomInt(max: count)
+        return self[index]
+    }
+    
+}
+
