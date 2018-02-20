@@ -211,7 +211,7 @@ struct Dungeon {
     
     var rooms = [DungeonLocation.Room]()
     
-    func printMap(currentRoom: DungeonLocation.Room) {
+    func printMap(currentRoom: DungeonLocation.Room? = nil) {
         var xMin = 0
         var yMin = 0
         var xMax = 0
@@ -240,9 +240,13 @@ struct Dungeon {
                 let gridY = ((y - yMin) * 2) - 1
                 
                 if let room = roomAt(x, y) {
-                    grid[gridY][gridX] = room.up ? "▲" : "O"
-                    grid[gridY][gridX] = room.down ? "▼" : "O"
-                    grid[gridY][gridX] = room == currentRoom ? "U" : grid[gridY][gridX]
+                    grid[gridY][gridX] = "O"
+                    grid[gridY][gridX] = room.up ? "▲" : grid[gridY][gridX]
+                    grid[gridY][gridX] = room.down ? "▼" : grid[gridY][gridX]
+                    
+                    if nil != currentRoom {
+                        grid[gridY][gridX] = room == currentRoom! ? "U" : grid[gridY][gridX]
+                    }
                     
                     if room.south != nil {
                         grid[gridY + 1][gridX] =  "|"

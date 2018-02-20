@@ -22,4 +22,17 @@ cprint(🎨.bold, #function, 🎨.reset, 🎨.green, " v1.0")
 cprint("Seed: ", seed)
 cprint()
 
-DungeonScrawler(seed: seed).start()
+if let maps = Int(CommandLine.argNamed("maps") ?? "") {
+    
+    // Generate maps
+    for level in 1 ... maps {
+        let generator = DungeonGenerator(seed: seed, level: level)
+        let dungeon = generator.buildDungeon()
+        dungeon.printMap()
+    }
+        
+} else {
+    
+    // Play the game!
+    DungeonScrawler(seed: seed).start()
+}
