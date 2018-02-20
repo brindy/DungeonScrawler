@@ -30,6 +30,10 @@ class DungeonLocation: Location {
             return String(format: "%x", x)
         }
 
+        static func ==(left: Room, right: Room) -> Bool {
+            return left.x == right.x && left.y == right.y
+        }
+        
     }
 
     var hint: String?
@@ -147,13 +151,7 @@ class DungeonLocation: Location {
     }
     
     private func handleMap(context: DungeonScrawler) -> Bool {
-
-        let map = dungeon.generateMap(currentRoom: currentRoom)
-        
-        for line in map {
-            cprint(line)
-        }
-
+        dungeon.printMap(currentRoom: currentRoom)
         return true
     }
 
@@ -219,7 +217,7 @@ struct Dungeon {
     
     var rooms = [DungeonLocation.Room]()
     
-    func generateMap(currentRoom: DungeonLocation.Room) -> [String] {
+    func printMap(currentRoom: DungeonLocation.Room) {
         var xMin = 0
         var yMin = 0
         var xMax = 0
@@ -236,30 +234,42 @@ struct Dungeon {
         yMax += 1
         xMin -= 1
         xMax += 1
+
+        let width = ((xMax - xMin) * 2)
+        let height = ((yMax - yMin) * 2)
+
+        print(width, height, xMin, yMin, xMax, yMax)
         
-        var map = [String]()
-        for y in yMin ... yMax {
-            var line = ""
-            for x in xMin ... xMax {
+        var grid = Array(repeating: Array(repeating: ".", count: width), count: height)
+        
+        for y in yMin ..< yMax {
+            for x in xMin ..< xMax {
+                let gridX = (x - xMin) * 2
+                let gridY = (y - yMin) * 2
                 
-                if x == currentRoom.x && y == currentRoom.y {
-                    line += "X"
-                } else if let room = roomAt(x, y) {
-                    if room.up {
-                        line += "^"
-                    } else if room.down {
-                        line += "!"
-                    } else {
-                        line += room.walls()
+                if let room = roomAt(x, y) {
+                    grid[gridY][gridX] = room.up ? "▲" : "O"
+                    grid[gridY][gridX] = room.down ? "▼" : "O"
+                    grid[gridY][gridX] = room == currentRoom ? "U" : grid[gridY][gridX]
+                    
+                    if room.south != nil {
+                        grid[gridY + 1][gridX] =  "|"
                     }
-                } else {
-                    line += "."
+                    
+                    if room.east != nil {
+                        grid[gridY][gridX + 1] =  "-"
+                    }
+                    
                 }
-                
             }
-            map.append(line)
         }
-        return map
+        
+        for row in grid {
+            for col in row {
+                print(col, terminator: "")
+            }
+            print()
+        }
     }
     
     func roomAt(_ x: Int, _ y: Int) -> DungeonLocation.Room? {
