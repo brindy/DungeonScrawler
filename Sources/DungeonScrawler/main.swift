@@ -29,7 +29,7 @@ if let maps = Int(CommandLine.argNamed("maps") ?? "") {
         let generator = DungeonGenerator(seed: seed, level: level)
         let dungeon = generator.buildDungeon()
         
-        cprint("Level ", level)
+        cprint("Level ", level, ". ", dungeon.rooms.count, " rooms.")
         dungeon.printMap()
         cprint()
     }

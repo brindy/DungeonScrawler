@@ -20,7 +20,7 @@ class DungeonGenerator {
     init(seed: Int, level: Int) {
         self.level = level
         🎲 = MersenneTwister(seed: UInt64(seed + level))
-        minRooms = (level * 10) + 5
+        minRooms = Int(log10(Double(level + 1)) * 50)
     }
     
     func buildDungeon() -> Dungeon {
@@ -28,38 +28,43 @@ class DungeonGenerator {
         
         while (dungeon.rooms.count < minRooms) {
             let room = dungeon.rooms.random(withGenerator: &🎲)
-
-            // let direction = 🎲.randomInt(max: 4)
-
-            var directions = [Int]()
-            if room.exits().count < 3 {
-                
-                if room.north == nil { directions.append(0) }
-                if room.east == nil { directions.append(1) }
-                if room.south == nil { directions.append(2) }
-                if room.west == nil { directions.append(3) }
-                
-            } else {
-                if room.north == nil && room.south == nil {
-                    directions.append(0)
-                    directions.append(2)
-                }
-                
-                if room.east == nil && room.west == nil {
-                    directions.append(1)
-                    directions.append(3)
-                }
+            
+            guard let direction = randomCorridorDirection(forRoom: room) else {
+                continue
             }
             
-            guard directions.count > 0 else { continue }
-            
-            let direction = directions.random(withGenerator: &🎲)            
             let distance = 🎲.randomInt(max: 2) + 1
             travel(from: room, direction: direction, distance: distance)
         }
         
         createStairsDown()
         return dungeon
+    }
+    
+    private func randomCorridorDirection(forRoom room: Dungeon.Room) -> Int? {
+        var directions = [Int]()
+        if room.exits().count < 3 {
+            
+            if room.north == nil { directions.append(0) }
+            if room.east == nil { directions.append(1) }
+            if room.south == nil { directions.append(2) }
+            if room.west == nil { directions.append(3) }
+            
+        } else {
+            if room.north == nil && room.south == nil {
+                directions.append(0)
+                directions.append(2)
+            }
+            
+            if room.east == nil && room.west == nil {
+                directions.append(1)
+                directions.append(3)
+            }
+        }
+        
+        guard directions.count > 0 else { return nil }
+        
+        return directions.random(withGenerator: &🎲)
     }
     
     private func createStartRoom() {
