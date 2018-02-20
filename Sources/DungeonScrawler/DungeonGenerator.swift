@@ -31,9 +31,7 @@ class DungeonGenerator {
         while (dungeon.rooms.count < minRooms) {
             let room = randomRoom()
             let direction = 🎲.randomInt(max: 4)
-            let maxDistance = Int(ceil(Double(level) / 2))
-            // print(#function, maxDistance, dungeon.rooms.count)
-            let distance = 🎲.randomInt(max: maxDistance) + 1
+            let distance = 🎲.randomInt(max: 2) + 1
             travel(from: room, direction: direction, distance: distance)
         }
         
@@ -63,6 +61,7 @@ class DungeonGenerator {
     private func travel(from room: DungeonLocation.Room, direction: Int, distance: Int) {
         guard dungeon.rooms.count < minRooms else { return }
         guard distance > 0 else { return }
+        guard 0 == 🎲.randomInt(max: room.exits().count) else { return }
         
         switch(direction) {
         case 0: room.north = createRoom(x: room.x, y: room.y - 1)

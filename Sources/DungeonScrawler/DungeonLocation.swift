@@ -21,15 +21,34 @@ class DungeonLocation: Location {
             self.y = y
         }
 
-        func walls() -> String {
-            let x = (
-                north != nil ? 1 : 0) +
-                (east != nil ? 2 : 0) +
-                (south != nil ? 4 : 0) +
-                (west != nil ? 8 : 0)
-            return String(format: "%x", x)
+        func exits() -> [String] {
+            var exits = [String]()
+            if north != nil {
+                exits.append("north")
+            }
+            
+            if east != nil {
+                exits.append("east")
+            }
+            
+            if south != nil {
+                exits.append("south")
+            }
+            
+            if west != nil {
+                exits.append("west")
+            }
+            
+            if up {
+                exits.append("up")
+            }
+            
+            if down {
+                exits.append("down")
+            }
+            return exits
         }
-
+        
         static func ==(left: Room, right: Room) -> Bool {
             return left.x == right.x && left.y == right.y
         }
@@ -156,33 +175,8 @@ class DungeonLocation: Location {
     }
 
     private func showExits() {
-        var exits = [String]()
-        if currentRoom.north != nil {
-            exits.append("north")
-        }
-
-        if currentRoom.east != nil {
-            exits.append("east")
-        }
-
-        if currentRoom.south != nil {
-            exits.append("south")
-        }
-
-        if currentRoom.west != nil {
-            exits.append("west")
-        }
-        
-        if currentRoom.up {
-            exits.append("up")
-        }
-
-        if currentRoom.down {
-            exits.append("down")
-        }
-
         cprint()
-        cprint("Exits are: ", exits)
+        cprint("Exits are: ", currentRoom.exits())
     }
 
     private func handleGo(args: [String], context: DungeonScrawler) -> Bool {
@@ -235,17 +229,15 @@ struct Dungeon {
         xMin -= 1
         xMax += 1
 
-        let width = ((xMax - xMin) * 2)
-        let height = ((yMax - yMin) * 2)
-
-        print(width, height, xMin, yMin, xMax, yMax)
+        let width = ((xMax - xMin) * 2) - 1
+        let height = ((yMax - yMin) * 2) - 1
         
         var grid = Array(repeating: Array(repeating: ".", count: width), count: height)
         
         for y in yMin ..< yMax {
             for x in xMin ..< xMax {
-                let gridX = (x - xMin) * 2
-                let gridY = (y - yMin) * 2
+                let gridX = ((x - xMin) * 2) - 1
+                let gridY = ((y - yMin) * 2) - 1
                 
                 if let room = roomAt(x, y) {
                     grid[gridY][gridX] = room.up ? "▲" : "O"
@@ -265,8 +257,8 @@ struct Dungeon {
         }
         
         for row in grid {
-            for col in row {
-                print(col, terminator: "")
+            for location in row {
+                print(location.replacingOccurrences(of: ".", with: "\(🎨.grey).\(🎨.reset)"), terminator: "")
             }
             print()
         }

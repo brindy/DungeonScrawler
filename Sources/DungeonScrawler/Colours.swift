@@ -7,6 +7,14 @@ struct 🎨 {
         return isEnabled ? "\u{1b}[32m" : ""
     }
 
+    static var grey: String {
+        return isEnabled ? "\u{1b}[37m" : ""
+    }
+
+    static var brown: String {
+        return isEnabled ? "\u{1b}[33m" : ""
+    }
+
     static var bold: String {
         return isEnabled ? "\u{1b}[1m" : ""
     }
