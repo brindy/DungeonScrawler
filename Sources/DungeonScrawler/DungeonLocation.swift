@@ -3,14 +3,13 @@ import Foundation
 
 class DungeonLocation: Location {
 
-
     var hint: String?
 
     let seed: Int
-
+    
     var level: Int
-    var dungeon: Dungeon!
-
+    var dungeons = [Dungeon]()
+    var currentDungeon: Dungeon!
     var currentRoom: Dungeon.Room! {
         didSet {
             currentRoom.visited = true
@@ -20,8 +19,7 @@ class DungeonLocation: Location {
     init(seed: Int, level: Int) {
         self.seed = seed
         self.level = level
-
-        generate()
+        gotoDungeon()
     }
     
     func describe() {
@@ -38,37 +36,33 @@ class DungeonLocation: Location {
 
         switch(command) {
         case "go": return handleGo(args: args, context: context)
-        case "north": return handleGo(args: ["north"], context: context)
-        case "east": return handleGo(args: ["east"], context: context)
-        case "south": return handleGo(args: ["south"], context: context)
-        case "west": return handleGo(args: ["west"], context: context)
-        case "n": return handleGo(args: ["north"], context: context)
-        case "e": return handleGo(args: ["east"], context: context)
-        case "s": return handleGo(args: ["south"], context: context)
-        case "w": return handleGo(args: ["west"], context: context)
-        case "up": return handleUp(context: context)
-        case "down": return handleDown(context: context)
-        case "map": return handleMap(context: context)
+        case "north", "n": return handleGo(args: ["north"], context: context)
+        case "east", "e": return handleGo(args: ["east"], context: context)
+        case "south", "s": return handleGo(args: ["south"], context: context)
+        case "west", "w": return handleGo(args: ["west"], context: context)
+        case "up", "u": return handleUp(context: context)
+        case "down", "d": return handleDown(context: context)
+        case "map", "m": return handleMap(context: context)
         default: return false
         }
     }
     
-    private func generate() {
+    private func generate() -> Dungeon {
         let generator = DungeonGenerator(seed: seed, level: level)
-        dungeon = generator.buildDungeon()
-        currentRoom = dungeon.rooms[0]
+        dungeons.append(generator.buildDungeon())
+        return dungeons.last!
     }
     
     private func showUpOrDown() {
         if currentRoom.up && level > 1 {
             cprint()
-            cprint("Stairs ascend to an upper level.")
+            cprint(🎨.italic, "Stairs ascend to an upper level.")
         } else if currentRoom.up {
             cprint()
-            cprint("Daylight shines through a hole in the ceiling above.")
+            cprint(🎨.italic, "Daylight shines through a hole in the roof of the chamber above.")
         } else if currentRoom.down {
             cprint()
-            cprint("A set of stairs descends in to the darkness below.")
+            cprint(🎨.italic, "A set of stairs descends in to the darkness below.")
         }
     }
     
@@ -85,7 +79,7 @@ class DungeonLocation: Location {
         }
         
         level += 1
-        generate()
+        gotoDungeon()
         return true
     }
     
@@ -103,14 +97,23 @@ class DungeonLocation: Location {
 
         return true
     }
+    
+    private func gotoDungeon() {
+        if level <= dungeons.count {
+            currentDungeon = dungeons[level - 1]
+        } else {
+            currentDungeon = generate()
+        }
+        currentRoom = currentDungeon.rooms[0]
+    }
 
     private func ascendLevel(context: DungeonScrawler) {
         
         level -= 1
         cprint("You head back up the long staircase.")
-        generate()
+        gotoDungeon()
         
-        for room in dungeon.rooms {
+        for room in currentDungeon.rooms {
             if room.down {
                 currentRoom = room
             }
@@ -124,13 +127,13 @@ class DungeonLocation: Location {
     }
     
     private func handleMap(context: DungeonScrawler) -> Bool {
-        dungeon.printMap(currentRoom: currentRoom, visitedOnly: true)
+        currentDungeon.printMap(currentRoom: currentRoom, visitedOnly: true)
         return true
     }
 
     private func showExits() {
         cprint()
-        cprint("Exits are: ", currentRoom.exits())
+        cprint("Exits are: ", currentRoom.exits().joined(separator: ", "))
     }
 
     private func handleGo(args: [String], context: DungeonScrawler) -> Bool {
