@@ -46,13 +46,15 @@ class TownLocation: Location {
     }
 
     private func handleMerchant(context: DungeonScrawler) {
-        cprint("You head towards the ", 🎨.bold, "merchant.")
+        cprint(🎨.italic, "You head towards the ", 🎨.bold, "merchant.")
         context.location = MerchantLocation()
     }
 
     private func handleDungeon(context: DungeonScrawler) {
-        cprint("You head towards the ", 🎨.bold, "dungeon", 🎨.reset, ", ready to start a new adventure.")
-        cprint("You look down an imposing hole in the ground and descend to face your fate!")
+        cprint(🎨.italic, "You head towards the ", 🎨.bold, "dungeon", 🎨.reset, 🎨.italic,", ready to start a new adventure.")
+        cprint()
+        cprint(🎨.italic, "You look down an imposing hole in the ground and descend to face your fate!")
+        cprint()
         context.location = DungeonLocation(seed: context.seed, level: 1)
     }
 
@@ -87,7 +89,7 @@ class MerchantLocation: Location {
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
         if command == "leave" {
-            cprint("You head towards the door. ", 🎨.italic, "\"Come back soon!\",", 🎨.reset, " the merchant says.")
+            cprint(🎨.italic, "You head towards the door. ", 🎨.bold, "\"Come back soon!\",", 🎨.reset, 🎨.italic, " the merchant says.")
             context.location = TownLocation()
             return true
         }

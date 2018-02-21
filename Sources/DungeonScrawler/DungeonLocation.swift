@@ -23,13 +23,15 @@ class DungeonLocation: Location {
     }
     
     func describe() {
-        cprint("You are in the dungeon.")
+        cprint("You are in the dungeon on level ", level, ".")
+        cprint()
         showUpOrDown()
+        examineRoom()
         showExits()
     }
 
     func look() {
-        cprint("The room is empty.")
+        // TODO extra detail?
     }
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
@@ -47,6 +49,11 @@ class DungeonLocation: Location {
         }
     }
     
+    private func examineRoom() {
+        cprint("The room is empty.")
+        cprint()
+    }
+    
     private func generate() -> Dungeon {
         let generator = DungeonGenerator(seed: seed, level: level)
         dungeons.append(generator.buildDungeon())
@@ -55,14 +62,14 @@ class DungeonLocation: Location {
     
     private func showUpOrDown() {
         if currentRoom.up && level > 1 {
+            cprint(🎨.bold, "Stairs ascend to an upper level.")
             cprint()
-            cprint(🎨.italic, "Stairs ascend to an upper level.")
         } else if currentRoom.up {
+            cprint(🎨.bold, "Daylight shines through a hole in the roof of the chamber above.")
             cprint()
-            cprint(🎨.italic, "Daylight shines through a hole in the roof of the chamber above.")
         } else if currentRoom.down {
+            cprint(🎨.bold, "A set of stairs descends in to the darkness below.")
             cprint()
-            cprint(🎨.italic, "A set of stairs descends in to the darkness below.")
         }
     }
     
@@ -73,13 +80,14 @@ class DungeonLocation: Location {
         }
 
         if level > 1 {
-            cprint("With a deep breath, you descend another set of stairs in to the darkness below.")
+            cprint(🎨.italic, "With a deep breath, you descend another set of stairs in to the darkness below.")
         } else {
-            cprint("Bracing yourself, you descend the stairs in to the darkness below.")
+            cprint(🎨.italic, "Bracing yourself, you descend the stairs in to the darkness below.")
         }
         
         level += 1
         gotoDungeon()
+        context.location = self
         return true
     }
     
@@ -94,7 +102,8 @@ class DungeonLocation: Location {
         } else {
             ascendToTown(context: context)
         }
-
+        
+        context.location = self
         return true
     }
     
@@ -110,7 +119,7 @@ class DungeonLocation: Location {
     private func ascendLevel(context: DungeonScrawler) {
         
         level -= 1
-        cprint("You head back up the long staircase.")
+        cprint(🎨.italic, "You head back up the long staircase.")
         gotoDungeon()
         
         for room in currentDungeon.rooms {
@@ -122,7 +131,7 @@ class DungeonLocation: Location {
     }
     
     private func ascendToTown(context: DungeonScrawler) {
-        cprint("You climb back out of the dungeon, leaving behind the ominous hole in the ground and head towards the town.")
+        cprint(🎨.italic, "You climb back out of the dungeon, leaving behind the ominous hole in the ground and head towards the town.")
         context.location = TownLocation()
     }
     
@@ -132,8 +141,8 @@ class DungeonLocation: Location {
     }
 
     private func showExits() {
-        cprint()
         cprint("Exits are: ", currentRoom.exits().joined(separator: ", "))
+        cprint()
     }
 
     private func handleGo(args: [String], context: DungeonScrawler) -> Bool {
@@ -155,7 +164,7 @@ class DungeonLocation: Location {
             cprint("You can't go that way.")
             return true
         }
-        cprint("Heading ", direction, ".")
+        cprint(🎨.italic, "You head ", direction, ".")
         currentRoom = room
         context.location = self
         return true
