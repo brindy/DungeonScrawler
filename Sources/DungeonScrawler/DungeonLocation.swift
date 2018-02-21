@@ -9,8 +9,13 @@ class DungeonLocation: Location {
     let seed: Int
 
     var level: Int
-    var currentRoom: Dungeon.Room!
     var dungeon: Dungeon!
+
+    var currentRoom: Dungeon.Room! {
+        didSet {
+            currentRoom.visited = true
+        }
+    }
 
     init(seed: Int, level: Int) {
         self.seed = seed
@@ -119,7 +124,7 @@ class DungeonLocation: Location {
     }
     
     private func handleMap(context: DungeonScrawler) -> Bool {
-        dungeon.printMap(currentRoom: currentRoom)
+        dungeon.printMap(currentRoom: currentRoom, visitedOnly: true)
         return true
     }
 
@@ -159,6 +164,12 @@ class DungeonLocation: Location {
 struct Dungeon {
     
     class Room {
+        
+        // user affected
+        
+        var visited = false
+        
+        // room properties
         
         var north: Room?
         var east: Room?
@@ -213,7 +224,7 @@ struct Dungeon {
     
     var rooms = [Room]()
     
-    func printMap(currentRoom: Room? = nil) {
+    func printMap(currentRoom: Room? = nil, visitedOnly: Bool = false) {
         let extents = calculateExtents()
         
         let width = ((extents.xMax - extents.xMin) * 2) - 1
@@ -227,6 +238,7 @@ struct Dungeon {
                 let gridY = ((y - extents.yMin) * 2) - 1
                 
                 guard let room = roomAt(x, y) else { continue }
+                if visitedOnly && !room.visited { continue }
 
                 grid[gridY][gridX] = "O"
                 grid[gridY][gridX] = room.up ? "▲" : grid[gridY][gridX]
@@ -236,12 +248,20 @@ struct Dungeon {
                     grid[gridY][gridX] = room == currentRoom! ? "U" : grid[gridY][gridX]
                 }
                 
-                if room.south != nil {
-                    grid[gridY + 1][gridX] =  "|"
+                if room.north != nil {
+                    grid[gridY - 1][gridX] =  "|"
                 }
                 
                 if room.east != nil {
                     grid[gridY][gridX + 1] =  "-"
+                }
+
+                if room.south != nil {
+                    grid[gridY + 1][gridX] =  "|"
+                }
+
+                if room.west != nil {
+                    grid[gridY][gridX - 1] =  "-"
                 }
             }
         }
