@@ -13,13 +13,15 @@ protocol Location {
 class DungeonScrawler {
 
     let seed: Int
+    let pc: PC
 
     let commands: [String: Command] = [
         "help": StandardCommands.help,
         "?": StandardCommands.help,
         "look": StandardCommands.look,
         "l": StandardCommands.look,
-        "quit": StandardCommands.quit
+        "quit": StandardCommands.quit,
+        "seed": StandardCommands.seed,
     ]
 
     var location: Location = TownLocation() {
@@ -29,8 +31,9 @@ class DungeonScrawler {
         }
     }
 
-    init(seed: Int) {
+    init(withSeed seed: Int, andPC pc: PC) {
         self.seed = seed
+        self.pc = pc
     }
 
     func start() {

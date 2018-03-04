@@ -3,16 +3,32 @@ struct 🎨 {
 
     static var isEnabled = true
 
+    static var red: String {
+        return isEnabled ? "\u{1b}[31m" : ""
+    }
+    
     static var green: String {
         return isEnabled ? "\u{1b}[32m" : ""
     }
 
-    static var grey: String {
-        return isEnabled ? "\u{1b}[37m" : ""
+    static var yellow: String {
+        return isEnabled ? "\u{1b}[33m" : ""
     }
 
-    static var brown: String {
-        return isEnabled ? "\u{1b}[33m" : ""
+    static var blue: String {
+        return isEnabled ? "\u{1b}[34m" : ""
+    }
+
+    static var purple: String {
+        return isEnabled ? "\u{1b}[35m" : ""
+    }
+
+    static var cyan: String {
+        return isEnabled ? "\u{1b}[36m" : ""
+    }
+
+    static var grey: String {
+        return isEnabled ? "\u{1b}[37m" : ""
     }
 
     static var bold: String {

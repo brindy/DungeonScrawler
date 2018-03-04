@@ -6,7 +6,8 @@ struct StandardCommands {
     static let look = LookCommand()
     static let help = HelpCommand()
     static let quit = QuitCommand()
-
+    static let seed = SeedCommand()
+    
 }
 
 protocol Command {
@@ -14,6 +15,20 @@ protocol Command {
     func execute(args: [String], context: DungeonScrawler) -> Bool
     func help() -> String
 
+}
+
+class SeedCommand: Command {
+    
+    func execute(args: [String], context: DungeonScrawler) -> Bool {
+        cprint(context.seed)
+        cprint()
+        return true
+    }
+    
+    func help() -> String {
+        return "Shows the seed used for this game."
+    }
+    
 }
 
 class QuitCommand: Command {

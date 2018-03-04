@@ -37,5 +37,7 @@ if let maps = Int(CommandLine.argNamed("maps") ?? "") {
 } else {
     
     // Play the game!
-    DungeonScrawler(seed: seed).start()
+    guard let pc = PCGenerator().start() else { exit(1) }
+    DungeonScrawler(withSeed: seed, andPC: pc).start()
+    
 }
