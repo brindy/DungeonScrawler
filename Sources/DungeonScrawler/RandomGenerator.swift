@@ -171,26 +171,6 @@ public struct DevRandom: RandomGenerator {
 	}
 }
 
-public struct Arc4Random: RandomGenerator {
-	public init() {
-	}
-	
-	public mutating func randomize(buffer: UnsafeMutableRawPointer, size: Int) {
-		arc4random_buf(buffer, size)
-	}
-	
-	public mutating func random64() -> UInt64 {
-		// Generating 2x32-bit appears to be faster than using arc4random_buf on a 64-bit value
-		var value: UInt64 = 0
-		arc4random_buf(&value, MemoryLayout<UInt64>.size)
-		return value
-	}
-
-	public mutating func random32() -> UInt32 {
-		return arc4random()
-	}
-}
-
 public struct Xoroshiro: RandomWordGenerator {
 	public typealias WordType = UInt64
 	public typealias StateType = (UInt64, UInt64)
