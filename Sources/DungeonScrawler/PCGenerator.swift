@@ -15,10 +15,11 @@ class PCGenerator {
         cprint()
         let pc = PC(name: name)
         
-        guard let stats = askStartingPackage(name: name) else { return nil }
+        guard let package = askStartingPackage(name: name) else { return nil }
         cprint()
-        pc.stats = stats
+        pc.stats = package.stats
         pc.points = PC.Points(experience: 0, hitPoints: pc.stats.constitution, magicPoints: pc.stats.power)
+        pc.skills = package.skills
         
         // TODO starting skills
         
@@ -50,7 +51,7 @@ class PCGenerator {
         }
     }
     
-    private func askStartingPackage(name: String) -> PC.Stats? {
+    private func askStartingPackage(name: String) -> (stats: PC.Stats, skills: [PC.Skills: Int])? {
         cprint(🎨.bold, 🎨.red, name, 🎨.reset, ", please choosing a starting package:")
         cprint()
         cprint(🎨.bold, "1", 🎨.reset, ". Warrior")
@@ -77,15 +78,15 @@ class PCGenerator {
         switch(package!) {
         case 1:
             cprint("Oh yes, I could see from your chiselled phsyique you are naturally warrior material.")
-            return PC.Stats.warrior
+            return (PC.Stats.warrior, PC.Skills.warrior)
             
         case 2:
             cprint("Aha! I had a sense there was something sneaky about you.")
-            return PC.Stats.rogue
+            return (PC.Stats.rogue, PC.Skills.warrior)
             
         case 3:
             cprint("Of course! That explains the power I sense inside of you.")
-            return PC.Stats.mage
+            return (PC.Stats.mage, PC.Skills.warrior)
             
         default: return nil
         }
@@ -101,3 +102,10 @@ extension PC.Stats {
     
 }
 
+extension PC.Skills {
+    
+    static var warrior = [PC.Skills: Int]()
+    static var rogue = [PC.Skills: Int]()
+    static var magic = [PC.Skills: Int]()
+
+}

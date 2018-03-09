@@ -27,21 +27,21 @@ class PC {
     }
     
     // 0 - 100
-    struct Skills {
+    enum Skills {
         
-        var dodge: Int = 0          // +(dex * 2), critical = free attack
-        var firstAid: Int = 0       // critical = full heal
+        case dodg               // +(dex * 2), critical = free attack
+        case firstAid           // critical = full heal
         
-        var shields: Int = 0
+        case unarmedCombat
         
-        var simpleMelee: Int = 0
-        var martialMelee: Int = 0
+        case simpleMelee
+        case martialMelee
+        case shields
         
-        var simpleRanged: Int = 0
-        var martialRanged: Int = 0
-        var unarmedCombat: Int = 0
+        case simpleRanged
+        case martialRanged
         
-        var casting: Int = 0
+        case casting
         
     }
     
@@ -60,6 +60,9 @@ class PC {
     let name: String
     var points = Points()
     var stats = Stats()
+    
+    var skills = [PC.Skills: Int]()
+    
     var body = Body()
 
     var inventory = [Item]()
