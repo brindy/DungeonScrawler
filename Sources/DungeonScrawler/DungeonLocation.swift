@@ -23,15 +23,14 @@ class DungeonLocation: Location {
     }
     
     func describe() {
-        cprint("You are in the dungeon on level ", level, ".")
+        cprint("You are are room in the dungeon on level ", level, ".")
         cprint()
-        showUpOrDown()
-        examineRoom()
         showExits()
+        showUpOrDown()
     }
 
     func look() {
-        // TODO extra detail?
+        examineRoom()
     }
 
     func handle(command: String, args: [String], context: DungeonScrawler) -> Bool {
