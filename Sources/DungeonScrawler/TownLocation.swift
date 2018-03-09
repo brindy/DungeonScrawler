@@ -34,14 +34,14 @@ class TownLocation: Location {
             return
         }
 
-        let who = args[0]
+        let location = args.joined(separator: " ")
         
-        switch(who) {
+        switch(location) {
 
-        case "merchant": handleMerchant(context: context)
-        case "dungeon": handleDungeon(context: context)
+        case "merchant", "the merchant": handleMerchant(context: context)
+        case "dungeon", "the dungeon": handleDungeon(context: context)
         default:
-            cprint("There is no '\(who)' in the town.")
+            cprint("There is no '\(location)' in the town.")
         }
     }
 
