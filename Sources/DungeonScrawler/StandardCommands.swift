@@ -7,6 +7,7 @@ struct StandardCommands {
     static let help = HelpCommand()
     static let quit = QuitCommand()
     static let seed = SeedCommand()
+    static let stats = StatsCommand()
     
 }
 
@@ -15,6 +16,19 @@ protocol Command {
     func execute(args: [String], context: DungeonScrawler) -> Bool
     func help() -> String
 
+}
+
+class StatsCommand: Command {
+    
+    func execute(args: [String], context: DungeonScrawler) -> Bool {
+        cprint("You are: ", 🎨.green, context.pc.name)
+        return true
+    }
+    
+    func help() -> String {
+        return "Shows your character's stats."
+    }
+    
 }
 
 class SeedCommand: Command {
@@ -77,8 +91,8 @@ class HelpCommand: Command {
 
         cprint("Standard commands:")
         cprint()
-        for (help, keys) in commands {
-            cprint(keys.sorted().joined(separator: ", "), " ➡ ", help)
+        for (help, keys) in commands.sorted(by: { $0.key < $1.key }) {
+            cprint(keys.sorted(by: { $0.count > $1.count }).joined(separator: ", "), " ➡ ", help)
         }
 
         if let hint = context.location.hint {

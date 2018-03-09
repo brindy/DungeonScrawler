@@ -22,6 +22,7 @@ class DungeonScrawler {
         "l": StandardCommands.look,
         "quit": StandardCommands.quit,
         "seed": StandardCommands.seed,
+        "stats": StandardCommands.stats
     ]
 
     var location: Location = TownLocation() {
