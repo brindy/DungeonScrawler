@@ -72,17 +72,17 @@ class PC {
 
 protocol Item {
     
-    func wielded(onPC pc: PC)
+}
+
+protocol EquipableItem: Item {
     
-    func unwielded(fromPC pc: PC)
+    func equipped(onPC pc: PC)
+    
+    func unequipped(fromPC pc: PC)
     
 }
 
-protocol WearableItem: Item {
-    
-    func worn(onPC pc: PC)
-    
-    func unworn(fromPC pc: PC)
+protocol WearableItem: EquipableItem {
     
 }
 

@@ -18,6 +18,7 @@ class PCGenerator {
         guard let stats = askStartingPackage(name: name) else { return nil }
         cprint()
         pc.stats = stats
+        pc.points = PC.Points(experience: 0, hitPoints: pc.stats.constitution, magicPoints: pc.stats.power)
         
         // TODO starting skills
         

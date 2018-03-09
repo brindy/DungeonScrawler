@@ -22,6 +22,31 @@ class StatsCommand: Command {
     
     func execute(args: [String], context: DungeonScrawler) -> Bool {
         cprint("You are: ", 🎨.green, context.pc.name)
+        cprint()
+        
+        with(context.pc) {
+            
+            cprint(🎨.bold, "Stats:")
+            with($0.stats) {
+                cprint("Strength: ", 🎨.blue, $0.strength)
+                cprint("Dexterity: ", 🎨.blue, $0.dexterity)
+                cprint("Power: ", 🎨.blue, $0.power)
+                cprint("Constitution: ", 🎨.blue, $0.constitution)
+            }
+
+            with($0.points) {
+                cprint()
+                cprint(🎨.bold, "Hit Points: ", 🎨.blue, $0.hitPoints)
+                
+                cprint()
+                cprint(🎨.bold, "Magic Points: ", 🎨.blue, $0.magicPoints)
+                
+                cprint()
+                cprint(🎨.bold, "Experience Points: ", 🎨.blue, $0.experience)
+            }
+            
+        }
+        
         return true
     }
     

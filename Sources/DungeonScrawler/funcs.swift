@@ -27,3 +27,6 @@ func fib(target: Int) -> Int {
     return n
 }
 
+func with<T>(_ element: T, call: (T) -> Void) {
+    call(element)
+}
