@@ -82,11 +82,11 @@ class PCGenerator {
             
         case 2:
             cprint("Aha! I had a sense there was something sneaky about you.")
-            return (PC.Stats.rogue, PC.Skills.warrior)
+            return (PC.Stats.rogue, PC.Skills.rogue)
             
         case 3:
             cprint("Of course! That explains the power I sense inside of you.")
-            return (PC.Stats.mage, PC.Skills.warrior)
+            return (PC.Stats.mage, PC.Skills.mage)
             
         default: return nil
         }
@@ -106,6 +106,6 @@ extension PC.Skills {
     
     static var warrior = [PC.Skills: Int]()
     static var rogue = [PC.Skills: Int]()
-    static var magic = [PC.Skills: Int]()
+    static var mage = [PC.Skills: Int]()
 
 }
