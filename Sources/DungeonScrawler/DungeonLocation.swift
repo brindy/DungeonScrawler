@@ -190,10 +190,12 @@ struct Dungeon {
         var up = false
         var down = false
         
+        let seed: Int
         let x: Int
         let y: Int
         
-        init(x: Int, y: Int) {
+        init(seed: Int, x: Int, y: Int) {
+            self.seed = seed
             self.x = x
             self.y = y
         }

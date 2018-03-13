@@ -130,7 +130,7 @@ class DungeonGenerator {
         if let room = dungeon.roomAt(x, y) {
             return room
         }
-        let room = Dungeon.Room(x: x, y: y)
+        let room = Dungeon.Room(seed: 🎲.randomInt() , x: x, y: y)
         dungeon.rooms.append(room)
         return room
     }
@@ -140,7 +140,11 @@ class DungeonGenerator {
 extension RandomGenerator {
     
     mutating func randomInt(max: Int) -> Int {
-        return Int(random32(max: UInt32(max)))
+        return Int(random32(max: min(UInt32(max), UInt32.max)))
+    }
+    
+    mutating func randomInt() -> Int {
+        return Int(random32())
     }
     
 }
