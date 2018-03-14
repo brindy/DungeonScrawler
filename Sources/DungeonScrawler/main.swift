@@ -23,21 +23,35 @@ cprint("Seed: ", seed)
 cprint()
 
 if let maps = Int(CommandLine.argNamed("maps") ?? "") {
-    
+
     // Generate maps
     for level in 1 ... maps {
         let generator = DungeonGenerator(seed: seed, level: level)
         let dungeon = generator.buildDungeon()
-        
+
         cprint("Level ", level, ". ", dungeon.rooms.count, " rooms.")
         dungeon.printMap()
         cprint()
     }
-        
+
+} else if let names = Int(CommandLine.argNamed("names") ?? ""),
+        let file = CommandLine.argNamed("file") {
+
+    guard let sampleNames = file.readTextFile()?.components(separatedBy: "\n").filter({ !$0.isEmpty }) else {
+        cprint("Unable to read \(file)")
+        exit(1)
+    }
+
+    let generator = NameGenerator(seed: seed, basedOnSampleNames: sampleNames)
+    for _ in 0 ..< names {
+        cprint(generator.generate().capitalized)
+    }
+
 } else {
-    
+
     // Play the game!
     guard let pc = PCGenerator().start() else { exit(1) }
     DungeonScrawler(withSeed: seed, andPC: pc).start()
-    
+
 }
+

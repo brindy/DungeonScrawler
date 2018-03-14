@@ -8,11 +8,11 @@
 import Foundation
 
 struct MonsterGenerator {
-
-    static func generate(seed: Int, level: Int) -> Monster {
+    
+    func generate(seed: Int, level: Int) -> Monster {
         return Monster()
     }
-    
+
 }
 
 struct Monster {

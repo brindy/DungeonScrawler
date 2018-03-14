@@ -35,3 +35,26 @@ extension Array {
     
 }
 
+extension Dictionary {
+    
+    func randomKey( withGenerator 🎲: inout RandomGenerator) -> Key {
+        let index = 🎲.randomInt(max: count)
+        let key = Array(keys)[index]
+        return key
+    }
+    
+}
+
+extension String {
+    
+    func readTextFile() -> String? {
+        let url = URL(fileURLWithPath: self.starts(with: "/") ? self : "./\(self)")
+        print("reading \(url)")
+        return try? String(contentsOf: url)
+    }
+    
+    subscript (i: Int) -> Character {
+        return self[index(startIndex, offsetBy: i)]
+    }
+
+}

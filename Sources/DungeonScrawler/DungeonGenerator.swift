@@ -139,12 +139,8 @@ class DungeonGenerator {
 
 extension RandomGenerator {
     
-    mutating func randomInt(max: Int) -> Int {
-        return Int(random32(max: min(UInt32(max), UInt32.max)))
-    }
-    
-    mutating func randomInt() -> Int {
-        return Int(random32())
+    mutating func randomInt(max: Int = Int.max) -> Int {
+        return Int(randomClosed() * Double(max))
     }
     
 }
