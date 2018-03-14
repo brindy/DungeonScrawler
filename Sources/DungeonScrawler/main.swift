@@ -42,7 +42,12 @@ if let maps = Int(CommandLine.argNamed("maps") ?? "") {
         exit(1)
     }
 
-    let generator = NameGenerator(seed: seed, basedOnSampleNames: sampleNames)
+    let table = NameGenerator.createTable(fromSampleNames: sampleNames)
+    if let jsonData = try? JSONSerialization.data(withJSONObject: table, options: .prettyPrinted), let json = String(data: jsonData, encoding: .utf8) {
+        print(json)
+    }
+
+    let generator = NameGenerator(seed: seed, usingTable: table)
     for _ in 0 ..< names {
         cprint(generator.generate().capitalized)
     }

@@ -10,7 +10,7 @@ Cranium Rat
 Crawling Claw   
 Deer    
 Eagle   
-Giant Fire Beetle   
+Fire Beetle   
 Goat    
 Hawk    
 Homunculus  
@@ -35,9 +35,9 @@ Camel
 Dolphin 
 Flumph  
 Flying Snake    
-Giant Crab  
-Giant Rat   
-Giant Weasel    
+Crab  
+Rat   
+Weasel    
 Kobold  
 Manes   
 Mastiff 
@@ -66,14 +66,14 @@ Drow
 Duodrone    
 Elk 
 Flying Sword    
-Giant Badger    
-Giant Bat   
-Giant Centipede 
-Giant Frog  
-Giant Lizard    
-Giant Owl   
-Giant Poisonous Snake   
-Giant Wolf Spider   
+Badger    
+Bat   
+Centipede 
+Frog  
+Lizard    
+Owl   
+Poisonous Snake   
+Wolf Spider   
 Gnoll Witherling    
 Goblin  
 Grimlock    
@@ -117,9 +117,9 @@ Dust Mephit
 Firenewt Warrior    
 Gas Spore   
 Gazer   
-Giant Goat  
-Giant Sea Horse 
-Giant Wasp  
+Goat  
+Sea Horse 
+Wasp  
 Gnoll   
 Gnoll Hunter    
 Gray Ooze   
@@ -159,13 +159,13 @@ Duergar
 Fire Snake  
 Firenewt Warlock of Imix    
 Ghoul   
-Giant Eagle 
-Giant Hyena 
-Giant Octopus   
-Giant Spider    
-Giant Strider   
-Giant Toad  
-Giant Vulture   
+Eagle 
+Hyena 
+Octopus   
+Spider    
+Strider   
+Toad  
+Vulture   
 Gnoll Flesh Gnawer  
 Goblin Boss 
 Grung Wildling  
@@ -192,7 +192,7 @@ Thri-kreen
 Tiger   
 Vargouille  
 Xvart Warlock of Raxivort   
-Young Faerie Dragon 
+Faerie Dragon 
 Yuan-ti Pureblood   
 Adult Faerie Dragon 
 Allosaurus  
@@ -205,14 +205,14 @@ Bronze Dragon Wyrmling
 Carrion Crawler 
 Cave Bear   
 Centaur 
-Darkling Elder  
+Darkling  
 Ettercap    
 Gargoyle    
 Gelatinous Cube 
 Ghast   
-Giant Boar  
-Giant Constrictor Snake 
-Giant Elk   
+Boar  
+Constrictor Snake 
+Elk   
 Gibbering Mouther   
 Githzerai Monk  
 Gnoll Pack Lord 
@@ -251,20 +251,20 @@ Saber-toothed Tiger
 Sahuagin Priestess  
 Sea Hag 
 Shadow Mastiff  
-Silver Dragon Wyrmling  
+Dragon Wyrmling  
 Specter 
 Poltergeist
 Spined Devil    
 Swarm of Poisonous Snakes   
 Vegepygmy Chief 
 Wererat 
-White Dragon Wyrmling   
+Dragon Wyrmling   
 Will-o-wisp 
 Yuan-ti Broodguard  
 Ankylosaurus    
 Basilisk    
 Bearded Devil   
-Blue Dragon Wyrmling    
+Dragon Wyrmling    
 Bugbear Chief   
 Cave Fisher 
 Choldrith   
@@ -272,9 +272,9 @@ Deep Scion
 Displacer Beast 
 Doppelganger    
 Flail Snail 
-Giant Scorpion  
+Scorpion  
 Githyanki Warrior   
-Gold Dragon Wyrmling    
+Dragon Wyrmling    
 Green Hag   
 Grell   
 Hell Hound  
@@ -287,7 +287,7 @@ Minotaur
 Mummy   
 Neogi   
 Nightmare   
-Orc Red Fang of Shargaas    
+Orc Fang of Shargaas    
 Owlbear 
 Phase Spider    
 Quaggoth Thonot 
@@ -323,7 +323,7 @@ Lizard Queen
 Neogi Master    
 Orc Blade of Ilneval    
 Orc War Chief   
-Red Dragon Wyrmling 
+Dragon Wyrmling 
 Shadow Demon    
 Stegosaurus 
 Succubus    
@@ -345,16 +345,16 @@ Drow Elite Warrior
 Earth Elemental 
 Fire Elemental  
 Flesh Golem 
-Giant Crocodile 
-Giant Shark 
+Crocodile 
+Shark 
 Gorgon  
-Half-Red Dragon Veteran 
-Hill Giant  
+Half-Dragon Veteran 
+Hill  
 Mezzoloth   
 Mindwitness 
 Night Hag   
 Otyugh  
-Red Slaad   
+Slaad   
 Revenant    
 Roper   
 Sahuagin Baron  
@@ -374,7 +374,7 @@ Werebear
 Wood Woad   
 Wraith  
 Xorn    
-Young Remorhaz  
+Remorhaz  
 Yuan-ti Pit Master  
 Annis Hag   
 Bodak   
@@ -393,27 +393,27 @@ Medusa
 Mouth of Grolantor  
 Vrock   
 Wyvern  
-Young Brass Dragon  
-Young White Dragon  
+Brass Dragon  
+Dragon  
 Bheur Hag   
-Blue Slaad  
+Slaad  
 Draegloth   
 Drow Mage   
-Giant Ape   
+Ape   
 Grick Alpha 
 Korred  
 Mind Flayer 
 Oni 
 Shield Guardian 
-Stone Giant 
-Young Black Dragon  
-Young Copper Dragon 
+Stone 
+Black Dragon  
+Copper Dragon 
 Yuan-ti Abomination 
 Chain Devil 
 Cloaker 
 Drow Priestess of Lolth 
 Fomorian    
-Frost Giant 
+Frost 
 Githyanki Knight    
 Green Slaad 
 Hezrou  
@@ -422,21 +422,21 @@ Mind Flayer Arcanist
 Shoosuva    
 Spirit Naga 
 Tyrannosaurus Rex   
-Young Bronze Dragon 
-Young Green Dragon  
+Bronze Dragon 
+Green Dragon  
 Abominable Yeti 
 Bone Devil  
 Clay Golem  
-Cloud Giant 
-Fire Giant  
+Cloud 
+Fire  
 Flind   
 Glabrezu    
 Gray Slaad  
 Nycaloth    
 Treant  
 Ulitharid   
-Young Blue Dragon   
-Young Silver Dragon 
+Dragon   
+Dragon 
 Aboleth 
 Alhoon  
 Death Kiss  
@@ -444,13 +444,13 @@ Death Slaad
 Deva    
 Froghemoth  
 Guardian Naga   
-Stone Giant Dreamwalker 
+Stone Dreamwalker 
 Stone Golem 
 Yochlol 
-Young Gold Dragon   
-Young Red Dragon    
+Dragon   
+Dragon    
 Behir   
-Cloud Giant Smiling One 
+Cloud Smiling One 
 Dao 
 Djinni  
 Efreeti 
@@ -462,27 +462,27 @@ Remorhaz
 Roc 
 Arcanaloth  
 Erinyes 
-Frost Giant Everlasting One 
+Frost Everlasting One 
 Ki-rin  
 Morkoth    
 Yuan-ti Anathema    
 Adult Brass Dragon  
-Adult White Dragon  
+Adult Dragon  
 Beholder    
 Devourer    
 Nalfeshnee  
 Neothelid   
 Rakshasa    
-Storm Giant 
+Storm 
 Ultroloth   
 Vampire 
-Young Red Shadow Dragon 
+Shadow Dragon 
 Adult Black Dragon  
 Adult Copper Dragon 
 Beholder   
 Death Tyrant    
-Elder Brain 
-Fire Giant Dreadnought  
+Brain 
+Fire Dreadnought  
 Ice Devil   
 Adult Bronze Dragon 
 Adult Green Dragon  
@@ -490,16 +490,16 @@ Death Tyrant
 Mummy Lord  
 Purple Worm 
 Vampire    
-Adult Blue Dragon   
-Adult Silver Dragon 
+Adult Dragon   
+Adult Dragon 
 Iron Golem  
 Marilith    
 Mummy Lord     
 Planetar    
-Storm Giant Quintessent 
-Adult Blue Dracolich    
-Adult Gold Dragon   
-Adult Red Dragon    
+Storm Quintessent 
+Adult Dracolich    
+Adult Dragon   
+Adult Dragon    
 Androsphinx 
 Death Knight    
 Dragon Turtle   
@@ -507,21 +507,21 @@ Goristro
 Demilich    
 Balor   
 Demilich
-Ancient Brass Dragon    
-Ancient White Dragon    
+Brass Dragon    
+Dragon    
 Pit Fiend   
-Ancient Black Dragon    
-Ancient Copper Dragon   
+Black Dragon    
+Copper Dragon   
 Lich    
 Solar   
-Ancient Bronze Dragon   
-Ancient Green Dragon    
+Bronze Dragon   
+Green Dragon    
 Lich   
 Mind Flayer Lich    
-Ancient Blue Dragon 
-Ancient Silver Dragon   
+Dragon 
+Dragon   
 Empyrean    
 Kraken  
-Ancient Gold Dragon 
-Ancient Red Dragon  
+Dragon 
+Dragon  
 Tarrasque   

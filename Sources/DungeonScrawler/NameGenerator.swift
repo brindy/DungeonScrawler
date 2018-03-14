@@ -22,24 +22,22 @@ class NameGenerator {
         self.table = table
     }
     
-    convenience init(seed: Int, basedOnSampleNames sampleNames: [String]) {
-        self.init(seed: seed, usingTable: NameGenerator.createTable(fromSampleNames: sampleNames))
-    }
-    
     static func createTable(fromSampleNames sampleNames: [String]) -> [String: [String]] {
         var table = [String: [String]]()
         
-        let cleanNames = Array(Set(sampleNames)).map({ $0
+        let cleanNames = sampleNames.map({ $0
             .replacingOccurrences(of: " ", with: "")
             .replacingOccurrences(of: "-", with: "")
             .lowercased()
         })
         
-        for name in cleanNames {
+        let maxFix = 3
+        
+        for name in Set(cleanNames) {
             
             var prefixes = [String]()
             for index in 0 ..< name.count {
-                guard let suffixes = name.accumulate(from: index, length: 3), !suffixes.isEmpty else { continue }
+                guard let suffixes = name.accumulate(from: index, length: maxFix), !suffixes.isEmpty else { continue }
                 
                 // each suffix is also a key in the table
                 for suffix in suffixes {
@@ -59,7 +57,7 @@ class NameGenerator {
                 prefixes.append(suffixes[0])
                 
                 // remove any that are no longer within the size constraints
-                prefixes = prefixes.filter({ $0.count <= 3 })
+                prefixes = prefixes.filter({ $0.count <= maxFix })
             }
 
         }
@@ -68,27 +66,34 @@ class NameGenerator {
     }
     
     func generate() -> String {
-        // TODO randomly pick 1, 2 or 3 words and only put separators between them, rather than generating
+        var name = shortName()
+        var separators = ["'", "-", " "]
+        for _ in 0 ..< separators.count {
+            (name, separators) = append(name, separators)
+        }
+        return name
+    }
+    
+    private func append(_ name: String, _ separators: [String]) -> (name: String, separator: [String]) {
+        var newName = name
+        var separator: String? = nil
+        if 🎲.randomInt(max: 10) == 0 {
+            separator = separators.random(withGenerator: &🎲)
+            newName = "\(name)\(separator!)\(shortName())"
+        }
+        return (newName, separators.filter({ $0 != separator }))
+    }
+    
+    private func shortName() -> String {
         
-        let length = 🎲.randomInt(max: 7) + 3
-        
-        var separator = ""
-        var next: String? = table.filter({ $0.value.count > 0 }).randomKey(withGenerator: &🎲)
         var name = ""
-        while(name.count < length && next != nil) {
-            name = "\(name)\(separator)\(next!)"
-            next = nextPart(next)
-
-            if separator.isEmpty && 🎲.randomInt(max: 50) == 0 {
-                switch (🎲.randomClosed()) {
-                case 0 ..< 0.3: separator = "'"
-                case 0.3 ..< 0.7: separator = "-"
-                default: separator = " "
-                }
-            } else {
-                separator = ""
+        while !name.hasVowel() {
+            let length = 🎲.randomInt(max: 5) + 3
+            var next: String? = table.filter({ $0.value.count > 0 }).randomKey(withGenerator: &🎲)
+            while(name.count < length && next != nil) {
+                name = "\(name)\(next!)"
+                next = nextPart(next)
             }
-            
         }
         
         return name
@@ -108,13 +113,19 @@ class NameGenerator {
     
 }
 
-extension String {
+
+fileprivate extension String {
+
+    func hasVowel() -> Bool {
+        let vowels = "aeiou"
+        return contains(where: { vowels.contains($0) })
+    }
     
     func accumulate(from start: Int, length: Int) -> [String]? {
         var parts = [String]()
         
         var part = ""
-        for offset in 1 ..< length {
+        for offset in 0 ..< length {
             let index = start + offset
             guard index < count else { return parts }
             
